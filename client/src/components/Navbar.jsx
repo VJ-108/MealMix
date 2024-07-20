@@ -1,9 +1,20 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
+
 const Navbar = () => {
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
+  const handleDropdownToggle = () => {
+    setIsDropdownOpen(!isDropdownOpen);
+  };
+
+  const handleLinkClick = () => {
+    setIsDropdownOpen(false);
+  };
+
   return (
     <div>
-      <div className="navbar bg-base-100 shadow-lg fixed glass">
+      <div className="navbar bg-base-100 shadow-lg fixed z-[1000]">
         <div className="navbar-start">
           <div className="flex-1">
             <a className="btn btn-error text-xl text-white hover:bg-red-500">
@@ -31,6 +42,7 @@ const Navbar = () => {
               tabIndex={0}
               role="button"
               className="btn btn-ghost btn-circle"
+              onClick={handleDropdownToggle}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -49,25 +61,46 @@ const Navbar = () => {
             </div>
             <ul
               tabIndex={0}
-              className="menu menu-sm dropdown-content rounded-box z-[1] mt-3 w-52 p-2 shadow"
+              className={`menu menu-sm dropdown-content rounded-box z-[1] mt-3 w-52 p-2 shadow bg-base-100 border border-gray-300 ${
+                isDropdownOpen ? "block" : "hidden"
+              }`}
             >
               <li>
-                <Link to={"/"} className="font-semibold">
+                <Link
+                  to={"/"}
+                  className="font-semibold"
+                  onClick={handleLinkClick}
+                >
                   Home
                 </Link>
               </li>
+              <div className="divider m-0"></div>
               <li>
-                <Link to={"/recipe"} className="font-semibold">
+                <Link
+                  to={"/recipe"}
+                  className="font-semibold"
+                  onClick={handleLinkClick}
+                >
                   Recipe
                 </Link>
               </li>
+              <div className="divider m-0"></div>
               <li>
-                <Link to={"/about"} className="font-semibold">
+                <Link
+                  to={"/about"}
+                  className="font-semibold"
+                  onClick={handleLinkClick}
+                >
                   About
                 </Link>
               </li>
+              <div className="divider m-0"></div>
               <li>
-                <Link to={"/contact"} className="font-semibold">
+                <Link
+                  to={"/contact"}
+                  className="font-semibold"
+                  onClick={handleLinkClick}
+                >
                   Contact
                 </Link>
               </li>
