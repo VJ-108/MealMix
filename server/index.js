@@ -8,6 +8,13 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
+//routes
+import userRouter from "./routes/user.routes.js";
+import recipeRouter from "./routes/recipe.routes.js";
+
+app.use("/api/user", userRouter);
+app.use("/api/recipe", recipeRouter);
+
 app.get("/", (req, res) => {
   res.send("Hello World!");
 });
