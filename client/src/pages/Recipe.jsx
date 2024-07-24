@@ -49,7 +49,7 @@ const Recipe = () => {
       <div className="pt-24 flex justify-center">
         <input
           type="text"
-          placeholder="Type here"
+          placeholder="Search Recipe"
           className="input input-bordered input-info md:w-full max-w-lg w-72"
         />
       </div>
