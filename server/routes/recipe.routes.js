@@ -30,6 +30,6 @@ router
   .get(GetrecipeLimiter, verifyJWT, getForRecipePage);
 router
   .route("/getDetailedRecipe")
-  .get(GetrecipeLimiter, verifyJWT, getDetailedRecipe);
+  .post(GetrecipeLimiter, verifyJWT, getDetailedRecipe);
 
 export default router;

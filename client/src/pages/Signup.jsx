@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { registerUser } from "../store/slices/userSlice";
 import { useNavigate } from "react-router-dom";
+import { registerUser } from "../store/thunks/userThunks";
 
 const Signup = () => {
   const [username, setUsername] = useState("");

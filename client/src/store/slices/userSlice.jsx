@@ -1,53 +1,18 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "axios";
-import { baseUrl } from "../../utils/constant";
-
-export const registerUser = createAsyncThunk(
-  "user/registerUser",
-  async ({ username, email, password }) => {
-    axios.defaults.withCredentials = true;
-    const response = await axios.post(`${baseUrl}/user/signup`, {
-      username,
-      email,
-      password,
-    });
-    return response.data?.user;
-  }
-);
-
-export const loginUser = createAsyncThunk(
-  "user/loginUser",
-  async ({ email, password }) => {
-    axios.defaults.withCredentials = true;
-    const response = await axios.post(`${baseUrl}/user/login`, {
-      email,
-      password,
-    });
-    return response.data?.user;
-  }
-);
-
-export const logoutUser = createAsyncThunk("user/logoutUser", async () => {
-  axios.defaults.withCredentials = true;
-  await axios.post(`${baseUrl}/user/logout`);
-  return {};
-});
-
-export const deleteUserAccount = createAsyncThunk(
-  "user/deleteAccount",
-  async () => {
-    axios.defaults.withCredentials = true;
-    await axios.delete(`${baseUrl}/user/deleteAccount`);
-    return {};
-  }
-);
+import { createSlice } from "@reduxjs/toolkit";
+import {
+  deleteUserAccount,
+  loginUser,
+  logoutUser,
+  registerUser,
+} from "../thunks/userThunks";
+import { toast } from "react-toastify";
 
 const userSlice = createSlice({
   name: "user-detail",
   initialState: {
     isRegistered: false,
     isLoggedIn: false,
-    user: {},
+    user: null,
   },
   reducers: {
     registered: (state, action) => {
@@ -69,11 +34,13 @@ const userSlice = createSlice({
       .addCase(loginUser.rejected, (state) => {
         state.isRegistered = false;
         state.isLoggedIn = false;
+        toast.error("Login failed. Please try again.");
       })
       .addCase(loginUser.fulfilled, (state, action) => {
         state.isRegistered = true;
         state.isLoggedIn = true;
         state.user = action.payload;
+        toast.success("Login successful!");
       })
       .addCase(registerUser.pending, (state) => {
         state.isRegistered = false;
@@ -82,14 +49,17 @@ const userSlice = createSlice({
       .addCase(registerUser.rejected, (state) => {
         state.isRegistered = false;
         state.isLoggedIn = false;
+        toast.error("Signup failed. Please try again.");
       })
       .addCase(registerUser.fulfilled, (state) => {
         state.isRegistered = true;
+        toast.success("SignUp successful!");
       })
       .addCase(logoutUser.rejected, (state) => {
         state.isRegistered = false;
         state.isLoggedIn = false;
         state.user = {};
+        toast.error("Error Logging out!");
       })
       .addCase(logoutUser.pending, (state) => {
         state.isRegistered = false;
@@ -99,6 +69,7 @@ const userSlice = createSlice({
         state.isRegistered = false;
         state.isLoggedIn = false;
         state.user = {};
+        toast.success("Logged out successfully!");
       })
       .addCase(deleteUserAccount.pending, (state) => {
         state.isRegistered = false;
@@ -107,10 +78,13 @@ const userSlice = createSlice({
       .addCase(deleteUserAccount.rejected, (state) => {
         state.isRegistered = false;
         state.isLoggedIn = false;
+        toast.error("Error deleting account!");
       })
       .addCase(deleteUserAccount.fulfilled, (state) => {
         state.isRegistered = false;
         state.isLoggedIn = false;
+        state.user = {};
+        toast.success("Account deleted successfully!");
       });
   },
 });

@@ -1,48 +1,17 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { getForRecipePage } from "../store/thunks/recipeThunks";
+import RecipeCard from "../components/RecipeCard";
 
 const Recipe = () => {
-  const recipes = [
-    {
-      id: 1,
-      title: "Shoes!",
-      description: "If a dog chews shoes whose shoes does he choose?",
-      image:
-        "https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp",
-      buttonText: "Buy Now",
-    },
-    {
-      id: 1,
-      title: "Shoes!",
-      description: "If a dog chews shoes whose shoes does he choose?",
-      image:
-        "https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp",
-      buttonText: "Buy Now",
-    },
-    {
-      id: 1,
-      title: "Shoes!",
-      description: "If a dog chews shoes whose shoes does he choose?",
-      image:
-        "https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp",
-      buttonText: "Buy Now",
-    },
-    {
-      id: 1,
-      title: "Shoes!",
-      description: "If a dog chews shoes whose shoes does he choose?",
-      image:
-        "https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp",
-      buttonText: "Buy Now",
-    },
-    {
-      id: 1,
-      title: "Shoes!",
-      description: "If a dog chews shoes whose shoes does he choose?",
-      image:
-        "https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp",
-      buttonText: "Buy Now",
-    },
-  ];
+  const recipesForRecipePage = useSelector(
+    (store) => store.recipe.recipesForRecipePage
+  );
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(getForRecipePage());
+  }, []);
 
   return (
     <div className="h-[1000px]">
@@ -53,167 +22,25 @@ const Recipe = () => {
           className="input input-bordered input-info md:w-full max-w-lg w-72"
         />
       </div>
-      <div className="h-[350px] pt-8">
-        <div className="px-6 font-bold text-orange-500 text-2xl underline">
-          Popular Recipe
+      {[
+        "Popular Recipe",
+        "Meals",
+        "Cuisine",
+        "Dietary Preferences",
+        "Occasion",
+        "Seasonal",
+      ].map((category, index) => (
+        <div key={index} className="h-[350px] pt-8">
+          <div className="px-6 font-bold text-orange-500 text-2xl underline">
+            {category}
+          </div>
+          <div className="flex gap-10 flex-nowrap overflow-x-scroll p-5">
+            {recipesForRecipePage.map((recipe) => (
+              <RecipeCard key={recipe.id} recipe={recipe} type={category} />
+            ))}
+          </div>
         </div>
-        <div className="flex gap-10 flex-nowrap overflow-x-scroll p-5">
-          {recipes.map((recipe, index) => (
-            <div
-              key={index}
-              className="card image-full md:w-96 w-72 shadow-xl flex-shrink-0"
-            >
-              <figure>
-                <img src={recipe.image} alt={recipe.title} />
-              </figure>
-              <div className="card-body">
-                <h2 className="card-title">{recipe.title}</h2>
-                <p>{recipe.description}</p>
-                <div className="card-actions justify-end">
-                  <button className="btn btn-primary">
-                    {recipe.buttonText}
-                  </button>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <div className="h-[350px] pt-8">
-        <div className="px-6 font-bold text-orange-500 text-2xl underline">
-          Meals
-        </div>
-        <div className="flex gap-10 flex-nowrap overflow-x-scroll p-5">
-          {recipes.map((recipe, index) => (
-            <div
-              key={index}
-              className="card image-full md:w-96 w-72 shadow-xl flex-shrink-0"
-            >
-              <figure>
-                <img src={recipe.image} alt={recipe.title} />
-              </figure>
-              <div className="card-body">
-                <h2 className="card-title">{recipe.title}</h2>
-                <p>{recipe.description}</p>
-                <div className="card-actions justify-end">
-                  <button className="btn btn-primary">
-                    {recipe.buttonText}
-                  </button>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <div className="h-[350px] pt-8">
-        <div className="px-6 font-bold text-orange-500 text-2xl underline">
-          Cuisine
-        </div>
-        <div className="flex gap-10 flex-nowrap overflow-x-scroll p-5">
-          {recipes.map((recipe, index) => (
-            <div
-              key={index}
-              className="card image-full md:w-96 w-72 shadow-xl flex-shrink-0"
-            >
-              <figure>
-                <img src={recipe.image} alt={recipe.title} />
-              </figure>
-              <div className="card-body">
-                <h2 className="card-title">{recipe.title}</h2>
-                <p>{recipe.description}</p>
-                <div className="card-actions justify-end">
-                  <button className="btn btn-primary">
-                    {recipe.buttonText}
-                  </button>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <div className="h-[350px] pt-8">
-        <div className="px-6 font-bold text-orange-500 text-2xl underline">
-          Dietary Preferences
-        </div>
-        <div className="flex gap-10 flex-nowrap overflow-x-scroll p-5">
-          {recipes.map((recipe, index) => (
-            <div
-              key={index}
-              className="card image-full md:w-96 w-72 shadow-xl flex-shrink-0"
-            >
-              <figure>
-                <img src={recipe.image} alt={recipe.title} />
-              </figure>
-              <div className="card-body">
-                <h2 className="card-title">{recipe.title}</h2>
-                <p>{recipe.description}</p>
-                <div className="card-actions justify-end">
-                  <button className="btn btn-primary">
-                    {recipe.buttonText}
-                  </button>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <div className="h-[350px] pt-8">
-        <div className="px-6 font-bold text-orange-500 text-2xl underline">
-          Occasion
-        </div>
-        <div className="flex gap-10 flex-nowrap overflow-x-scroll p-5">
-          {recipes.map((recipe, index) => (
-            <div
-              key={index}
-              className="card image-full md:w-96 w-72 shadow-xl flex-shrink-0"
-            >
-              <figure>
-                <img src={recipe.image} alt={recipe.title} />
-              </figure>
-              <div className="card-body">
-                <h2 className="card-title">{recipe.title}</h2>
-                <p>{recipe.description}</p>
-                <div className="card-actions justify-end">
-                  <button className="btn btn-primary">
-                    {recipe.buttonText}
-                  </button>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <div className="h-[350px] pt-8">
-        <div className="px-6 font-bold text-orange-500 text-2xl underline">
-          Seasonal
-        </div>
-        <div className="flex gap-10 flex-nowrap overflow-x-scroll p-5">
-          {recipes.map((recipe, index) => (
-            <div
-              key={index}
-              className="card image-full md:w-96 w-72 shadow-xl flex-shrink-0"
-            >
-              <figure>
-                <img src={recipe.image} alt={recipe.title} />
-              </figure>
-              <div className="card-body">
-                <h2 className="card-title">{recipe.title}</h2>
-                <p>{recipe.description}</p>
-                <div className="card-actions justify-end">
-                  <button className="btn btn-primary">
-                    {recipe.buttonText}
-                  </button>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
+      ))}
     </div>
   );
 };

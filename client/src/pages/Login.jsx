@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
-import { loginUser } from "../store/slices/userSlice";
+import { loginUser } from "../store/thunks/userThunks";
+
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
