@@ -1,16 +1,26 @@
 import React, { useEffect } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { setGenerate } from "../store/slices/recipeSlice";
 
 const RecipeDetail = () => {
+  const user = useSelector((store) => store.user.user);
   const DetailedRecipe = useSelector((store) => store.recipe.DetailedRecipe);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   useEffect(() => {
+    dispatch(setGenerate(false));
     if (!DetailedRecipe) {
       navigate("/recipe");
     }
-  }, [DetailedRecipe, navigate]);
+  }, []);
+
+  useEffect(() => {
+    if (!user) {
+      navigate("/login");
+    }
+  }, []);
 
   return DetailedRecipe ? (
     <div className="pt-16">
@@ -104,4 +114,3 @@ const RecipeDetail = () => {
 };
 
 export default RecipeDetail;
-  

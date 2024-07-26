@@ -42,9 +42,11 @@ const recipeSlice = createSlice({
       })
       .addCase(getDetailedRecipe.fulfilled, (state, action) => {
         state.DetailedRecipe = action.payload;
+        state.generate = false;
       })
       .addCase(generateRecipe.rejected, (state, action) => {
         state.DetailedRecipe = null;
+        state.generate = false;
       })
       .addCase(generateRecipe.fulfilled, (state, action) => {
         state.DetailedRecipe = action.payload;

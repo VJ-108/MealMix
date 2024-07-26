@@ -53,7 +53,7 @@ const userSlice = createSlice({
       .addCase(logoutUser.rejected, (state) => {
         state.isRegistered = false;
         state.isLoggedIn = false;
-        state.user = {};
+        state.user = null;
       })
       .addCase(logoutUser.pending, (state) => {
         state.isRegistered = false;
@@ -62,7 +62,7 @@ const userSlice = createSlice({
       .addCase(logoutUser.fulfilled, (state) => {
         state.isRegistered = false;
         state.isLoggedIn = false;
-        state.user = {};
+        state.user = null;
       })
       .addCase(deleteUserAccount.pending, (state) => {
         state.isRegistered = false;
@@ -75,7 +75,7 @@ const userSlice = createSlice({
       .addCase(deleteUserAccount.fulfilled, (state) => {
         state.isRegistered = false;
         state.isLoggedIn = false;
-        state.user = {};
+        state.user = null;
       });
   },
 });

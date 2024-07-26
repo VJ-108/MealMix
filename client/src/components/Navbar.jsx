@@ -1,8 +1,13 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { logoutUser } from "../store/thunks/userThunks";
 
 const Navbar = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const user = useSelector((store) => store.user.user);
+
+  const dispatch = useDispatch();
 
   const handleDropdownToggle = () => {
     setIsDropdownOpen(!isDropdownOpen);
@@ -10,6 +15,10 @@ const Navbar = () => {
 
   const handleLinkClick = () => {
     setIsDropdownOpen(false);
+  };
+
+  const handleLogOut = () => {
+    dispatch(logoutUser());
   };
 
   return (
@@ -52,6 +61,19 @@ const Navbar = () => {
           </Link>
         </div>
         <div className="navbar-end">
+          {!user && (
+            <div className="px-5 btn btn-ghost text-lg hover:text-teal-600 transition-colors duration-300 hidden md:flex">
+              <Link to={"/login"}>Login</Link>
+            </div>
+          )}
+          {user && (
+            <div
+              className="px-5 btn btn-ghost text-lg hover:text-teal-600 transition-colors duration-300 hidden md:flex"
+              onClick={() => handleLogOut()}
+            >
+              Logout
+            </div>
+          )}
           <div className="dropdown dropdown-end md:hidden block">
             <div
               tabIndex={0}
@@ -79,7 +101,9 @@ const Navbar = () => {
               className={`menu menu-sm dropdown-content rounded-box z-[1] mt-3 w-52 p-2 shadow border border-gray-300 transition-all duration-300 transform ${
                 isDropdownOpen ? "scale-100 opacity-100" : "scale-95 opacity-0"
               }`}
-              style={{ background: 'linear-gradient(to right, #e0f2f1, #fce4ec)' }} // Gradient color
+              style={{
+                background: "linear-gradient(to right, #e0f2f1, #fce4ec)",
+              }}
             >
               <li>
                 <Link
@@ -120,6 +144,18 @@ const Navbar = () => {
                   Contact
                 </Link>
               </li>
+              <div className="divider m-0"></div>
+              {!user && (
+                <li>
+                  <Link
+                    to={"/login"}
+                    className="font-semibold hover:text-teal-600 transition-colors duration-300"
+                    onClick={handleLinkClick}
+                  >
+                    Login
+                  </Link>
+                </li>
+              )}
             </ul>
           </div>
         </div>

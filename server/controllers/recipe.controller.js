@@ -55,7 +55,7 @@ const generateRecipe = async (req, res) => {
       });
     }
 
-    const prompt = `Generate a detailed recipe structure for ${dishName}. The recipe should include the name, description, type, ingredients, and steps. The type is an array of strings and can include: Meals, Popular Recipe, Cuisine, Dietary Preferences, Occasion, Seasonal. Only write these types and no need to categorize them further more. Use the following format:
+    const prompt = `Generate a detailed recipe structure for ${dishName}. The recipe should include the name, description, type, ingredients, and steps. The type is an array of strings and can include: Meals, Popular Recipe, Cuisine, Dietary Preferences, Occasion, Seasonal. Only write these types and no need to categorize them further more. Also add maximum three types or minimum one type. Use the following format:
     {
       "name": "[Dish Name]",
       "description": "[Detailed description of the dish]",

@@ -10,6 +10,7 @@ import { useNavigate } from "react-router-dom";
 const GenRecipe = () => {
   const [dishName, setDishName] = useState("");
   const [selectedDishName, setSelectedDishName] = useState("");
+  const user = useSelector((store) => store.user.user);
   const suggestedDishName = useSelector(
     (store) => store.recipe.suggestedDishName
   );
@@ -44,6 +45,15 @@ const GenRecipe = () => {
       navigate("/recipeDetail");
     }
   }, [DetailedRecipe, navigate]);
+
+  useEffect(() => {
+    if (!generate) {
+      navigate("/genRecipe");
+    }
+    if (!user) {
+      navigate("/login");
+    }
+  }, []);
 
   return (
     <div className="pt-12 md:pt-16 bg-gradient-to-r from-teal-100 to-pink-100 min-h-screen flex items-center justify-center">
