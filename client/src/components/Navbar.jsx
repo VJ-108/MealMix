@@ -14,25 +14,40 @@ const Navbar = () => {
 
   return (
     <div>
-      <div className="navbar bg-base-100 shadow-lg fixed z-[1000]">
+      <div className="navbar bg-gradient-to-r from-teal-100 to-pink-200 shadow-lg fixed z-[1000] transition-all duration-300">
         <div className="navbar-start">
           <div className="flex-1">
-            <a className="btn btn-error text-xl text-white hover:bg-red-500">
+            <Link
+              to="/"
+              className="btn btn-error text-xl text-white hover:bg-red-500 transition-all duration-300"
+            >
               Recipe
-            </a>
+            </Link>
           </div>
         </div>
         <div className="navbar-center gap-5 md:block hidden">
-          <Link to={"/"} className="btn btn-ghost text-lg">
+          <Link
+            to={"/"}
+            className="btn btn-ghost text-lg hover:text-teal-600 transition-colors duration-300"
+          >
             Home
           </Link>
-          <Link to={"/recipe"} className="btn btn-ghost text-lg">
+          <Link
+            to={"/recipe"}
+            className="btn btn-ghost text-lg hover:text-teal-600 transition-colors duration-300"
+          >
             Recipe
           </Link>
-          <Link to={"/about"} className="btn btn-ghost text-lg">
+          <Link
+            to={"/about"}
+            className="btn btn-ghost text-lg hover:text-teal-600 transition-colors duration-300"
+          >
             About
           </Link>
-          <Link to={"/contact"} className="btn btn-ghost text-lg">
+          <Link
+            to={"/contact"}
+            className="btn btn-ghost text-lg hover:text-teal-600 transition-colors duration-300"
+          >
             Contact
           </Link>
         </div>
@@ -41,7 +56,7 @@ const Navbar = () => {
             <div
               tabIndex={0}
               role="button"
-              className="btn btn-ghost btn-circle"
+              className="btn btn-ghost btn-circle hover:text-teal-600 transition-colors duration-300"
               onClick={handleDropdownToggle}
             >
               <svg
@@ -61,14 +76,15 @@ const Navbar = () => {
             </div>
             <ul
               tabIndex={0}
-              className={`menu menu-sm dropdown-content rounded-box z-[1] mt-3 w-52 p-2 shadow bg-base-100 border border-gray-300 ${
-                isDropdownOpen ? "block" : "hidden"
+              className={`menu menu-sm dropdown-content rounded-box z-[1] mt-3 w-52 p-2 shadow border border-gray-300 transition-all duration-300 transform ${
+                isDropdownOpen ? "scale-100 opacity-100" : "scale-95 opacity-0"
               }`}
+              style={{ background: 'linear-gradient(to right, #e0f2f1, #fce4ec)' }} // Gradient color
             >
               <li>
                 <Link
                   to={"/"}
-                  className="font-semibold"
+                  className="font-semibold hover:text-teal-600 transition-colors duration-300"
                   onClick={handleLinkClick}
                 >
                   Home
@@ -78,7 +94,7 @@ const Navbar = () => {
               <li>
                 <Link
                   to={"/recipe"}
-                  className="font-semibold"
+                  className="font-semibold hover:text-teal-600 transition-colors duration-300"
                   onClick={handleLinkClick}
                 >
                   Recipe
@@ -88,7 +104,7 @@ const Navbar = () => {
               <li>
                 <Link
                   to={"/about"}
-                  className="font-semibold"
+                  className="font-semibold hover:text-teal-600 transition-colors duration-300"
                   onClick={handleLinkClick}
                 >
                   About
@@ -98,7 +114,7 @@ const Navbar = () => {
               <li>
                 <Link
                   to={"/contact"}
-                  className="font-semibold"
+                  className="font-semibold hover:text-teal-600 transition-colors duration-300"
                   onClick={handleLinkClick}
                 >
                   Contact

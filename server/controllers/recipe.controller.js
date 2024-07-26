@@ -22,7 +22,7 @@ const suggestDishName = async (req, res) => {
       return res.send({ response: cachedResponse });
     }
 
-    const prompt = `Suggest top three dish names that can be made by considering ${dishName} as a main ingredient. The response should be a list of dish names, easy to make, popular, and if possible, Indian. Only provide the dish names, no numbering, symbols, or additional text.`;
+    const prompt = `Suggest top three dish names that can be made by considering ${dishName} as a main ingredient. The response should be list of dish names, popular, and if possible, Indian. Only provide the dish names, no numbering, symbols, or additional text at the start or end. If the dishName is something which is not a food ingredient then just return list of three '-'. The dishName could be in hinglish language so handle it accordingly`;
 
     const result = await model.generateContent(prompt);
     const response = result.response

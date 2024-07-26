@@ -11,8 +11,8 @@ const recipeSlice = createSlice({
   initialState: {
     recipesForRecipePage: null,
     DetailedRecipe: null,
-    generatedRecipe: null,
     suggestedDishName: null,
+    generate: false,
   },
   reducers: {
     setRecipeForRecipePage: (state, action) => {
@@ -21,35 +21,37 @@ const recipeSlice = createSlice({
     setDetailedRecipe: (state, action) => {
       state.DetailedRecipe = action.payload;
     },
-    setGeneratedRecipe: (state, action) => {
-      state.generatedRecipe = action.payload;
-    },
     setSuggestedDishName: (state, action) => {
       state.suggestedDishName = action.payload;
+    },
+    setGenerate: (state, action) => {
+      state.generate = action.payload;
     },
   },
   extraReducers: (builder) => {
     builder
-      .addCase(getForRecipePage.pending, (state, action) => {
-        state.recipesForRecipePage = [];
+      .addCase(getForRecipePage.rejected, (state, action) => {
+        state.recipesForRecipePage = null;
       })
       .addCase(getForRecipePage.fulfilled, (state, action) => {
         state.recipesForRecipePage = action.payload;
       })
-      .addCase(getDetailedRecipe.pending, (state, action) => {
-        state.DetailedRecipe = {};
+      .addCase(getDetailedRecipe.rejected, (state, action) => {
+        state.DetailedRecipe = null;
+        state.generate = true;
       })
       .addCase(getDetailedRecipe.fulfilled, (state, action) => {
         state.DetailedRecipe = action.payload;
       })
-      .addCase(generateRecipe.pending, (state, action) => {
-        state.generatedRecipe = {};
+      .addCase(generateRecipe.rejected, (state, action) => {
+        state.DetailedRecipe = null;
       })
       .addCase(generateRecipe.fulfilled, (state, action) => {
-        state.generatedRecipe = action.payload;
+        state.DetailedRecipe = action.payload;
+        state.generate = false;
       })
-      .addCase(suggestDishName.pending, (state, action) => {
-        state.suggestedDishName = [];
+      .addCase(suggestDishName.rejected, (state, action) => {
+        state.suggestedDishName = null;
       })
       .addCase(suggestDishName.fulfilled, (state, action) => {
         state.suggestedDishName = action.payload;
@@ -60,8 +62,8 @@ const recipeSlice = createSlice({
 export const {
   setRecipeForRecipePage,
   setDetailedRecipe,
-  setGeneratedRecipe,
   setSuggestedDishName,
+  setGenerate,
 } = recipeSlice.actions;
 
 export default recipeSlice.reducer;
