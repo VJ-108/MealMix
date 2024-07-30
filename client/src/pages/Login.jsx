@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, Link } from "react-router-dom";
 import { loginUser } from "../store/thunks/userThunks";
+import { toast } from "react-toastify";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -9,16 +10,36 @@ const Login = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const user = useSelector((store) => store.user.user);
-  const handleLogin = () => {
-    dispatch(loginUser({ email, password }));
-  };
 
   useEffect(() => {
     if (user) {
       navigate("/");
     }
   }, [user, navigate]);
-  
+
+  const handleLogin = () => {
+    if (email.trim() === "") {
+      toast.error("Email is required.");
+      return;
+    }
+    if (!/\S+@\S+\.\S+/.test(email)) {
+      toast.error("Email is invalid.");
+      return;
+    }
+    if (password.trim() === "") {
+      toast.error("Password is required.");
+      return;
+    }
+    if (password.length < 6) {
+      toast.error("Password must be at least 6 characters.");
+      return;
+    }
+
+    dispatch(loginUser({ email, password }));
+    setEmail("");
+    setPassword("");
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-r from-teal-100 to-pink-100 flex items-center justify-center pt-16 px-4 sm:px-6 lg:px-8">
       <div className="bg-white shadow-lg rounded-lg p-6 md:p-8 w-full max-w-sm md:max-w-md">

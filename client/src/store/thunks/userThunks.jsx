@@ -15,7 +15,11 @@ export const registerUser = createAsyncThunk(
     toast.promise(promise, {
       pending: "Registering user...",
       success: "User registered successfully!",
-      error: "Failed to register user",
+      error: {
+        render({ data }) {
+          return data?.response?.data?.message || "Failed to register user";
+        },
+      },
     });
     const response = await promise;
     return response.data?.user;
@@ -33,7 +37,11 @@ export const loginUser = createAsyncThunk(
     toast.promise(promise, {
       pending: "Logging in...",
       success: "Logged in successfully!",
-      error: "Failed to log in",
+      error: {
+        render({ data }) {
+          return data?.response?.data?.message || "Failed to log in";
+        },
+      },
     });
     const response = await promise;
     return response.data?.user;
@@ -46,7 +54,11 @@ export const logoutUser = createAsyncThunk("user/logoutUser", async () => {
   toast.promise(promise, {
     pending: "Logging out...",
     success: "Logged out successfully!",
-    error: "Failed to log out",
+    error: {
+      render({ data }) {
+        return data?.response?.data?.message || "Failed to log out";
+      },
+    },
   });
   await promise;
   return {};
@@ -60,7 +72,11 @@ export const deleteUserAccount = createAsyncThunk(
     toast.promise(promise, {
       pending: "Deleting account...",
       success: "Account deleted successfully!",
-      error: "Failed to delete account",
+      error: {
+        render({ data }) {
+          return data?.response?.data?.message || "Failed to delete account";
+        },
+      },
     });
     await promise;
     return {};

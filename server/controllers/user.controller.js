@@ -1,6 +1,7 @@
 import prisma from "../prisma/index.js";
 import jwt from "jsonwebtoken";
 import bcryptjs from "bcryptjs";
+import { signupSchema, loginSchema } from "../utils/validationSchemas.js";
 
 const generateRefreshToken = async (user) => {
   const { email } = user;
@@ -19,6 +20,7 @@ const generateRefreshToken = async (user) => {
   });
   return refreshToken;
 };
+
 const generateAccessToken = async (user) => {
   return jwt.sign(
     {
@@ -32,12 +34,14 @@ const generateAccessToken = async (user) => {
     }
   );
 };
+
 const signup = async (req, res) => {
   try {
-    const { username, email, password } = req.body;
-    if ([username, email, password].some((field) => field?.trim() === "")) {
-      return res.status(400).json({ message: "All fields are required" });
+    const result = signupSchema.safeParse(req.body);
+    if (!result.success) {
+      return res.status(400).json({ message: result.error.errors[0].message });
     }
+    const { username, email, password } = req.body;
     const existedUser = await prisma.user.findFirst({
       where: { OR: [{ username }, { email }] },
     });
@@ -66,10 +70,12 @@ const signup = async (req, res) => {
 
 const login = async (req, res) => {
   try {
-    const { email, password } = req.body;
-    if ([email, password].some((field) => field?.trim() === "")) {
-      return res.status(400).json({ message: "All fields are required" });
+    const result = loginSchema.safeParse(req.body);
+    if (!result.success) {
+      return res.status(400).json({ message: result.error.errors[0].message });
     }
+
+    const { email, password } = req.body;
 
     const user = await prisma.user.findFirst({
       where: { email },

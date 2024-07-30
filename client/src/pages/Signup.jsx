@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, Link } from "react-router-dom";
 import { registerUser } from "../store/thunks/userThunks";
+import { toast } from "react-toastify";
 
 const Signup = () => {
   const [username, setUsername] = useState("");
@@ -18,7 +19,31 @@ const Signup = () => {
   }, [isRegistered, navigate]);
 
   const handleSignup = () => {
+    if (username.trim() === "") {
+      toast.error("Username is required.");
+      return;
+    }
+    if (email.trim() === "") {
+      toast.error("Email is required.");
+      return;
+    }
+    if (!/\S+@\S+\.\S+/.test(email)) {
+      toast.error("Email is invalid.");
+      return;
+    }
+    if (password.trim() === "") {
+      toast.error("Password is required.");
+      return;
+    }
+    if (password.length < 6) {
+      toast.error("Password must be at least 6 characters.");
+      return;
+    }
+
     dispatch(registerUser({ username, email, password }));
+    setUsername("");
+    setEmail("");
+    setPassword("");
   };
 
   return (
