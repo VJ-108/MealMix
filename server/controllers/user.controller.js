@@ -70,6 +70,35 @@ const signup = async (req, res) => {
 
 const login = async (req, res) => {
   try {
+    const decodedToken = req.cookies?.accessToken;
+    if (decodedToken) {
+      try {
+        const decoded = jwt.verify(
+          decodedToken,
+          process.env.ACCESS_TOKEN_SECRET
+        );
+        if (!decoded || !decoded.id) {
+          return res.status(401).json({ message: "Invalid access token" });
+        }
+
+        const user = await prisma.user.findUnique({
+          where: { id: decoded.id },
+          select: { id: true, username: true, email: true },
+        });
+
+        if (!user) {
+          return res.status(401).json({ message: "User not found" });
+        }
+
+        return res.status(200).json({
+          message: "Logged in successfully",
+          user,
+        });
+      } catch (error) {
+        return res.status(401).json({ message: "Invalid access token" });
+      }
+    }
+
     const result = loginSchema.safeParse(req.body);
     if (!result.success) {
       return res.status(400).json({ message: result.error.errors[0].message });

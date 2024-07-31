@@ -3,6 +3,13 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { setGenerate } from "../store/slices/recipeSlice";
 
+const getColorFromPercentage = (value) => {
+  const percentage = parseInt(value, 10);
+  if (percentage < 10) return "bg-green-200 border-green-400";
+  if (percentage < 20) return "bg-yellow-200 border-yellow-400"; 
+  return "bg-red-200 border-red-400"; 
+};
+
 const RecipeDetail = () => {
   const user = useSelector((store) => store.user.user);
   const DetailedRecipe = useSelector((store) => store.recipe.DetailedRecipe);
@@ -14,13 +21,13 @@ const RecipeDetail = () => {
     if (!DetailedRecipe) {
       navigate("/recipe");
     }
-  }, []);
+  }, [dispatch, DetailedRecipe, navigate]);
 
   useEffect(() => {
     if (!user) {
       navigate("/login");
     }
-  }, []);
+  }, [user, navigate]);
 
   return DetailedRecipe ? (
     <div className="pt-16">
@@ -43,7 +50,7 @@ const RecipeDetail = () => {
               <p className="text-base md:text-lg font-serif font-medium text-gray-700 mb-5">
                 {DetailedRecipe.description}
               </p>
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-2 mb-3">
                 {DetailedRecipe.type?.map((type, i) => (
                   <span
                     className="bg-orange-500 text-white py-1 px-3 md:py-2 md:px-4 rounded-full text-sm md:text-lg hover:bg-orange-600 transition-colors duration-300"
@@ -53,8 +60,48 @@ const RecipeDetail = () => {
                   </span>
                 ))}
               </div>
+              <div className="flex flex-wrap gap-2">
+                {DetailedRecipe?.dietaryLabels?.map((dietaryLabels, i) => (
+                  <span
+                    className="bg-teal-500 text-white py-1 px-3 md:py-2 md:px-4 rounded-full text-sm md:text-lg hover:bg-teal-600 transition-colors duration-300"
+                    key={i}
+                  >
+                    {dietaryLabels}
+                  </span>
+                ))}
+              </div>
             </div>
           </div>
+          {DetailedRecipe.nutritionalContents && (
+            <div className="mt-6 md:mt-10">
+              <h2 className="text-3xl md:text-4xl font-extrabold text-yellow-600 underline mb-4">
+                Nutritional Information
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {Object.keys(DetailedRecipe.nutritionalContents).map(
+                  (key, i) => {
+                    const colorClass = getColorFromPercentage(
+                      DetailedRecipe.nutritionalContents[key].split("-")[0]
+                    );
+
+                    return (
+                      <div
+                        key={i}
+                        className={`bg-white shadow-md rounded-lg p-4 flex justify-between items-center border-l-4 ${colorClass}`}
+                      >
+                        <span className="text-lg font-medium text-gray-800">
+                          {key}
+                        </span>
+                        <span className="text-lg font-semibold text-gray-900">
+                          {DetailedRecipe.nutritionalContents[key]}
+                        </span>
+                      </div>
+                    );
+                  }
+                )}
+              </div>
+            </div>
+          )}
           {DetailedRecipe.ingredients && (
             <div className="mt-6 md:mt-10">
               <h2 className="text-3xl md:text-4xl font-extrabold text-purple-600 underline mb-4">

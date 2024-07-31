@@ -55,32 +55,57 @@ const generateRecipe = async (req, res) => {
       });
     }
 
-    const prompt = `Generate a detailed recipe structure for ${dishName}. The recipe should include the name, description, type, ingredients, and steps. The type is an array of strings and can include: Meals, Popular Recipe, Cuisine, Dietary Preferences, Occasion, Seasonal. Only write these types and no need to categorize them further more. Also add maximum three types or minimum one type. Use the following format:
-    {
-      "name": "[Dish Name]",
-      "description": "[Detailed description of the dish]",
-      "type": [Type of dish],
-      "ingredients": {
-        "[Section Name 1]": [
-          "[Ingredient 1]",
-          "[Ingredient 2]",
-          ...
-        ]
-      },
-      "steps": {
-        "[Section Name 1]": [
-          "[Step 1]",
-          "[Step 2]",
-          ...
-        ]
-      }
-    }`;
+    const prompt = `Generate a detailed recipe structure for ${dishName}. The recipe should include the name, description, type, ingredients, and steps. The type is an array of strings and can include: Meals, Popular Recipe, Cuisine, Dietary Preferences, Occasion, Seasonal. Only write these types and no need to categorize them further more. Also add a maximum of three types or a minimum of one type in randomized order for every dish. Also add a maximum of three dietaryLabels or a minimum of one dietaryLabels. Also this recipe should be for one person. No need to add one serving or something like that in name just give its name and if there is any common name of it in India then add it in brackets. Give detailed nutritionalContents as much as you can. Use the following format:
+{
+  "name": "[Dish Name]",
+  "description": "[Detailed description of the dish]",
+  "type": [Type of dish],
+  "ingredients": {
+    "[Section Name 1]": [
+      "[Ingredient 1] (Common Name)",
+      "[Ingredient 2] (Common Name)",
+      ...
+    ]
+  },
+  "steps": {
+    "[Section Name 1]": [
+      "[Step 1]",
+      "[Step 2]",
+      ...
+    ]
+  },
+  "nutritionalContents": {
+    "calories": "[Calories per serving]",
+    "protein": "[Protein per serving]",
+    "carbohydrates": "[Carbohydrates per serving]",
+    "fat": "[Fat per serving]",
+    "fiber": "[Fiber per serving]",
+    "sugar": "[Sugar per serving]",
+    "sodium": "[Sodium per serving]",
+    ...
+  },
+  "dietaryLabels": [
+    "[Vegetarian/Non-Vegetarian]",
+    "[Gluten-Free/Contains Gluten]",
+    "[Nut-Free/Contains Nuts]",
+    ...
+  ]
+}
+`;
 
     const result = await model.generateContent(prompt);
     const responseText = result.response.text();
     const responseJson = JSON.parse(cleanJsonResponse(responseText));
 
-    const { name, description, type, steps, ingredients } = responseJson;
+    const {
+      name,
+      description,
+      type,
+      steps,
+      ingredients,
+      nutritionalContents,
+      dietaryLabels,
+    } = responseJson;
 
     if ([name, description].some((field) => !field?.trim())) {
       return res
@@ -102,9 +127,30 @@ const generateRecipe = async (req, res) => {
         .json({ message: "At least one ingredient is required" });
     }
 
+    if (!nutritionalContents || Object.keys(nutritionalContents).length === 0) {
+      return res
+        .status(400)
+        .json({ message: "At least one nutritional content is required" });
+    }
+
+    if (!dietaryLabels || dietaryLabels.length === 0) {
+      return res
+        .status(400)
+        .json({ message: "At least one dietary label is required" });
+    }
+
     const img = await getPhoto(name);
     const newRecipe = await prisma.recipe.create({
-      data: { name, description, type, img, steps, ingredients },
+      data: {
+        name,
+        description,
+        type,
+        img,
+        steps,
+        ingredients,
+        nutritionalContents,
+        dietaryLabels,
+      },
     });
 
     myCache.set(key, newRecipe);

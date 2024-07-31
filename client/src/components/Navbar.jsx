@@ -144,17 +144,19 @@ const Navbar = () => {
                   Contact
                 </Link>
               </li>
-              <div className="divider m-0"></div>
               {!user && (
-                <li>
-                  <Link
-                    to={"/login"}
-                    className="font-semibold hover:text-teal-600 transition-colors duration-300"
-                    onClick={handleLinkClick}
-                  >
-                    Login
-                  </Link>
-                </li>
+                <>
+                  <div className="divider m-0"></div>
+                  <li>
+                    <Link
+                      to={"/login"}
+                      className="font-semibold hover:text-teal-600 transition-colors duration-300"
+                      onClick={handleLinkClick}
+                    >
+                      Login
+                    </Link>
+                  </li>
+                </>
               )}
             </ul>
           </div>

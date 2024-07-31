@@ -30,10 +30,15 @@ export const loginUser = createAsyncThunk(
   "user/loginUser",
   async ({ email, password }) => {
     axios.defaults.withCredentials = true;
-    const promise = axios.post(`${baseUrl}/user/login`, {
-      email,
-      password,
-    });
+    let promise;
+    if (!email && !password) {
+      promise = axios.post(`${baseUrl}/user/login`, {});
+    } else {
+      promise = axios.post(`${baseUrl}/user/login`, {
+        email,
+        password,
+      });
+    }
     toast.promise(promise, {
       pending: "Logging in...",
       success: "Logged in successfully!",

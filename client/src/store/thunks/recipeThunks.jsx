@@ -10,7 +10,11 @@ export const getForRecipePage = createAsyncThunk(
     const response = await toast.promise(
       axios.get(`${baseUrl}/recipe/getForRecipePage`),
       {
-        error: "Failed to load recipes",
+        error: {
+          render({ data }) {
+            return data?.response?.data?.message || "Failed to load recipes";
+          },
+        },
       }
     );
     return response.data?.recipes;
@@ -24,7 +28,13 @@ export const getDetailedRecipe = createAsyncThunk(
     const response = await toast.promise(
       axios.post(`${baseUrl}/recipe/getDetailedRecipe`, { name }),
       {
-        error: "Failed to load recipe details",
+        error: {
+          render({ data }) {
+            return (
+              data?.response?.data?.message || "Failed to load recipe details"
+            );
+          },
+        },
       }
     );
     return response.data?.recipe;
@@ -40,7 +50,11 @@ export const generateRecipe = createAsyncThunk(
       {
         pending: "Generating recipe...",
         success: "Recipe generated successfully!",
-        error: "Failed to generate recipe",
+        error: {
+          render({ data }) {
+            return data?.response?.data?.message || "Failed to generate recipe";
+          },
+        },
       }
     );
     return response.data?.newRecipe;
@@ -56,7 +70,13 @@ export const suggestDishName = createAsyncThunk(
       {
         pending: "Suggesting dish name...",
         success: "Dish name suggestion generated successfully!",
-        error: "Failed to suggest dish name",
+        error: {
+          render({ data }) {
+            return (
+              data?.response?.data?.message || "Failed to suggest dish name"
+            );
+          },
+        },
       }
     );
     return response.data?.response;

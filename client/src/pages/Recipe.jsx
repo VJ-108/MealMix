@@ -51,35 +51,45 @@ const Recipe = () => {
           "Dietary Preferences",
           "Occasion",
           "Seasonal",
-        ].map((category, index) => (
-          <div key={index} className="w-full mb-12 px-4">
-            {filteredRecipes.some((item) =>
-              item["type"].includes(category)
-            ) && (
-              <h2 className="text-2xl md:text-3xl font-bold text-teal-600 mb-4 hover:text-teal-700 transition-colors duration-300">
-                {category}
-              </h2>
-            )}
-            {filteredRecipes.length > 0 ? (
-              <div className="flex gap-6 overflow-x-auto pb-4 scroll-smooth">
-                {filteredRecipes.map((recipe) => (
-                  <RecipeCard key={recipe.id} recipe={recipe} type={category} />
-                ))}
-              </div>
-            ) : (
-              <div className="flex gap-6 overflow-x-auto pb-4 scroll-smooth">
-                {[...Array(4)].map((_, i) => (
-                  <div
-                    key={i}
-                    className="flex md:w-96 w-72 shadow-lg flex-shrink-0 h-56 flex-col gap-4 bg-white rounded-lg animate-pulse"
-                  >
-                    <div className="skeleton w-full h-full rounded-lg"></div>
+        ].map((category) => {
+          const hasRecipes = filteredRecipes.some((item) =>
+            item["type"].includes(category)
+          );
+
+          return (
+            hasRecipes && (
+              <div key={category} className="w-full px-4 mb-12">
+                <h2 className="text-2xl md:text-3xl font-bold text-teal-600 mb-4 hover:text-teal-700 transition-colors duration-300">
+                  {category}
+                </h2>
+                {filteredRecipes.length > 0 ? (
+                  <div className="flex gap-6 overflow-x-auto pb-4 scroll-smooth">
+                    {filteredRecipes
+                      .filter((recipe) => recipe["type"].includes(category))
+                      .map((recipe) => (
+                        <RecipeCard
+                          key={recipe.id}
+                          recipe={recipe}
+                          type={category}
+                        />
+                      ))}
                   </div>
-                ))}
+                ) : (
+                  <div className="flex gap-6 overflow-x-auto pb-4 scroll-smooth">
+                    {[...Array(4)].map((_, i) => (
+                      <div
+                        key={i}
+                        className="flex md:w-96 w-72 shadow-lg flex-shrink-0 h-56 flex-col gap-4 bg-white rounded-lg animate-pulse"
+                      >
+                        <div className="skeleton w-full h-full rounded-lg"></div>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
-            )}
-          </div>
-        ))}
+            )
+          );
+        })}
       </div>
     </div>
   );

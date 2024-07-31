@@ -18,13 +18,15 @@ model User {
 }
 
 model Recipe {
-  id          String     @id @default(auto()) @map("_id") @db.ObjectId
-  name        String     @unique
-  description String
-  type        String[]
-  img         String
-  ingredients Json
-  steps       Json
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
+  id                  String     @id @default(auto()) @map("_id") @db.ObjectId
+  name                String     @unique
+  description         String
+  type                String[]
+  img                 String
+  ingredients         Json
+  steps               Json
+  nutritionalContents Json
+  dietaryLabels       String[]
+  createdAt           DateTime   @default(now())
+  updatedAt           DateTime   @updatedAt
 }

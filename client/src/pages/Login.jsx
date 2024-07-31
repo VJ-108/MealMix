@@ -12,6 +12,12 @@ const Login = () => {
   const user = useSelector((store) => store.user.user);
 
   useEffect(() => {
+    if (!user) {
+      dispatch(loginUser({}));
+    }
+  }, [dispatch, user]);
+
+  useEffect(() => {
     if (user) {
       navigate("/");
     }
