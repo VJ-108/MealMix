@@ -1,7 +1,5 @@
 import React from "react";
-import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { getDetailedRecipe } from "../store/thunks/recipeThunks";
 
 function getFirst15Words(text) {
   if (!text) return "";
@@ -12,15 +10,13 @@ function getFirst15Words(text) {
 
 const RecipeCard = ({ recipe, type }) => {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
 
   if (!recipe || !recipe.img || !recipe.name || !recipe.description) {
     return null;
   }
 
   const handleOpen = () => {
-    dispatch(getDetailedRecipe({ name: recipe.name }));
-    navigate("/recipeDetail");
+    navigate(`/recipeDetail/${encodeURIComponent(recipe.name)}`);
   };
 
   const matchesType = recipe.type.some((category) => type === category);

@@ -55,7 +55,7 @@ const generateRecipe = async (req, res) => {
       });
     }
 
-    const prompt = `Generate a detailed recipe structure for ${dishName}. The recipe should include the name, description, type, ingredients, and steps. The type is an array of strings and can include: Meals, Popular Recipe, Cuisine, Dietary Preferences, Occasion, Seasonal. Only write these types and no need to categorize them further more. Also add a maximum of three types or a minimum of one type in randomized order for every dish. Also add a maximum of three dietaryLabels or a minimum of one dietaryLabels. Also this recipe should be for one person. No need to add one serving or something like that in name just give its name and if there is any common name of it in India then add it in brackets. Give detailed nutritionalContents as much as you can. Use the following format:
+    const prompt = `Generate a detailed recipe structure for ${dishName}. The recipe should include the name, description, type, ingredients, and steps. The type is an array of strings and can include: Meals, Popular Recipe, Cuisine, Dietary Preferences, Occasion, Seasonal. Only write these types and no need to categorize them further more. Also add a maximum of three types or a minimum of one type in randomized order for every dish. Also add a maximum of three dietaryLabels or a minimum of one dietaryLabels. Also this recipe should be for one person. No need to add one serving or something like that in name just give its popular name. Give detailed nutritionalContents as much as you can. Use the following format:
 {
   "name": "[Dish Name]",
   "description": "[Detailed description of the dish]",
@@ -223,6 +223,7 @@ const getForRecipePage = async (req, res) => {
         description: true,
         type: true,
         img: true,
+        rating: true,
       },
     });
 
@@ -268,16 +269,28 @@ const getDetailedRecipe = async (req, res) => {
       return res.status(404).json({ message: "Recipe not found" });
     }
 
-    myCache.set(key, recipe, 15 * 60);
+    const ratingCount = recipe.ratedByUserIds.length;
+
+    const detailedRecipe = {
+      ...recipe,
+      ratingCount,
+    };
+
+    myCache.set(key, detailedRecipe, 15 * 60);
 
     return res.status(200).json({
       message: "Recipe found",
-      recipe,
+      recipe: detailedRecipe,
     });
   } catch (error) {
     console.error("Error getting recipe:", error);
     return res.status(500).json({ message: "Error getting recipe" });
   }
+};
+
+const updateRating = async (req, res) => {
+  try {
+  } catch (error) {}
 };
 
 export {
@@ -286,4 +299,5 @@ export {
   getDetailedRecipe,
   generateRecipe,
   suggestDishName,
+  updateRating,
 };

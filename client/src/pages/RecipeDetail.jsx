@@ -1,33 +1,26 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { setGenerate } from "../store/slices/recipeSlice";
+import { getDetailedRecipe } from "../store/thunks/recipeThunks";
+import SocialShare from "../components/SocialShare";
 
 const getColorFromPercentage = (value) => {
   const percentage = parseInt(value, 10);
   if (percentage < 10) return "bg-green-200 border-green-400";
-  if (percentage < 20) return "bg-yellow-200 border-yellow-400"; 
-  return "bg-red-200 border-red-400"; 
+  if (percentage < 20) return "bg-yellow-200 border-yellow-400";
+  return "bg-red-200 border-red-400";
 };
 
 const RecipeDetail = () => {
-  const user = useSelector((store) => store.user.user);
   const DetailedRecipe = useSelector((store) => store.recipe.DetailedRecipe);
-  const navigate = useNavigate();
   const dispatch = useDispatch();
+  const { dishName } = useParams();
 
   useEffect(() => {
     dispatch(setGenerate(false));
-    if (!DetailedRecipe) {
-      navigate("/recipe");
-    }
-  }, [dispatch, DetailedRecipe, navigate]);
-
-  useEffect(() => {
-    if (!user) {
-      navigate("/login");
-    }
-  }, [user, navigate]);
+    dispatch(getDetailedRecipe({ name: decodeURIComponent(dishName) }));
+  }, [dispatch, dishName]);
 
   return DetailedRecipe ? (
     <div className="pt-16">
@@ -72,6 +65,11 @@ const RecipeDetail = () => {
               </div>
             </div>
           </div>
+          <SocialShare
+            url={window.location.href}
+            title={DetailedRecipe.name}
+            media={DetailedRecipe.img}
+          />
           {DetailedRecipe.nutritionalContents && (
             <div className="mt-6 md:mt-10">
               <h2 className="text-3xl md:text-4xl font-extrabold text-yellow-600 underline mb-4">
@@ -87,7 +85,7 @@ const RecipeDetail = () => {
                     return (
                       <div
                         key={i}
-                        className={`bg-white shadow-md rounded-lg p-4 flex justify-between items-center border-l-4 ${colorClass}`}
+                        className={`shadow-md rounded-lg p-4 flex justify-between items-center border-l-4 ${colorClass}`}
                       >
                         <span className="text-lg font-medium text-gray-800">
                           {key}

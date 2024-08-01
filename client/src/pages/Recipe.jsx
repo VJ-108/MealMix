@@ -2,26 +2,17 @@ import React, { useState, useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getForRecipePage } from "../store/thunks/recipeThunks";
 import RecipeCard from "../components/RecipeCard";
-import { useNavigate } from "react-router-dom";
 
 const Recipe = () => {
   const [searchQuery, setSearchQuery] = useState("");
-  const user = useSelector((store) => store.user.user);
   const recipesForRecipePage = useSelector(
     (store) => store.recipe.recipesForRecipePage
   );
   const dispatch = useDispatch();
-  const navigate = useNavigate();
 
   useEffect(() => {
     dispatch(getForRecipePage());
   }, [dispatch]);
-
-  useEffect(() => {
-    if (!user) {
-      navigate("/login");
-    }
-  }, [user, navigate]);
 
   const filteredRecipes = useMemo(() => {
     if (recipesForRecipePage) {

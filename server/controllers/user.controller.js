@@ -83,7 +83,17 @@ const login = async (req, res) => {
 
         const user = await prisma.user.findUnique({
           where: { id: decoded.id },
-          select: { id: true, username: true, email: true },
+          select: {
+            id: true,
+            username: true,
+            email: true,
+            ratedRecipes: {
+              select: {
+                id: true,
+                name: true,
+              },
+            },
+          },
         });
 
         if (!user) {
@@ -108,6 +118,18 @@ const login = async (req, res) => {
 
     const user = await prisma.user.findFirst({
       where: { email },
+      select: {
+        id: true,
+        username: true,
+        email: true,
+        password: true,
+        ratedRecipes: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+      },
     });
 
     if (!user) {
@@ -138,6 +160,7 @@ const login = async (req, res) => {
           id: user.id,
           username: user.username,
           email: user.email,
+          ratedRecipes: user.ratedRecipes,
         },
         accessToken,
         refreshToken,

@@ -5,6 +5,7 @@ import {
   getDetailedRecipe,
   generateRecipe,
   suggestDishName,
+  updateRating,
 } from "../controllers/recipe.controller.js";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
 import { limiter } from "../middlewares/rate_limit.middleware.js";
@@ -31,5 +32,6 @@ router
 router
   .route("/getDetailedRecipe")
   .post(GetrecipeLimiter, verifyJWT, getDetailedRecipe);
+router.route("/updateRating").post(GetrecipeLimiter, verifyJWT, updateRating);
 
 export default router;

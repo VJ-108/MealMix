@@ -42,7 +42,7 @@ const GenRecipe = () => {
 
   useEffect(() => {
     if (DetailedRecipe) {
-      navigate("/recipeDetail");
+      navigate(`/recipeDetail/${encodeURIComponent(selectedDishName)}`);
     }
   }, [DetailedRecipe, navigate]);
 
