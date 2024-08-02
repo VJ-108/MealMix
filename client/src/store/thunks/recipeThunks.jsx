@@ -82,3 +82,22 @@ export const suggestDishName = createAsyncThunk(
     return response.data?.response;
   }
 );
+
+export const updateRating = createAsyncThunk(
+  "recipe/updateRating",
+  async ({ name, newRating }) => {
+    axios.defaults.withCredentials = true;
+    const response = await toast.promise(
+      axios.post(`${baseUrl}/recipe/updateRating`, { name, newRating }),
+      {
+        success: "Thanks for your feedback",
+        error: {
+          render({ data }) {
+            return data?.response?.data?.message || "Failed to update rating";
+          },
+        },
+      }
+    );
+    return response.data?.recipe;
+  }
+);

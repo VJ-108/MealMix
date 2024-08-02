@@ -26,12 +26,8 @@ router
 router
   .route("/createRecipe")
   .post(createRecipeLimiter, verifyJWT, createRecipe);
-router
-  .route("/getForRecipePage")
-  .get(GetrecipeLimiter, verifyJWT, getForRecipePage);
-router
-  .route("/getDetailedRecipe")
-  .post(GetrecipeLimiter, verifyJWT, getDetailedRecipe);
-router.route("/updateRating").post(GetrecipeLimiter, verifyJWT, updateRating);
+router.route("/getForRecipePage").get(GetrecipeLimiter, getForRecipePage);
+router.route("/getDetailedRecipe").post(GetrecipeLimiter, getDetailedRecipe);
+router.route("/updateRating").post(createRecipeLimiter, verifyJWT, updateRating);
 
 export default router;

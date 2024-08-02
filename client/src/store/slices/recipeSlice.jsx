@@ -4,6 +4,7 @@ import {
   getDetailedRecipe,
   getForRecipePage,
   suggestDishName,
+  updateRating,
 } from "../thunks/recipeThunks";
 
 const recipeSlice = createSlice({
@@ -13,6 +14,7 @@ const recipeSlice = createSlice({
     DetailedRecipe: null,
     suggestedDishName: null,
     generate: false,
+    isRatingUpdated: false,
   },
   reducers: {
     setRecipeForRecipePage: (state, action) => {
@@ -26,6 +28,9 @@ const recipeSlice = createSlice({
     },
     setGenerate: (state, action) => {
       state.generate = action.payload;
+    },
+    setIsRatingUpdated: (state, action) => {
+      state.isRatingUpdated = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -43,6 +48,7 @@ const recipeSlice = createSlice({
       .addCase(getDetailedRecipe.fulfilled, (state, action) => {
         state.DetailedRecipe = action.payload;
         state.generate = false;
+        state.isRatingUpdated = false
       })
       .addCase(generateRecipe.rejected, (state, action) => {
         state.DetailedRecipe = null;
@@ -50,6 +56,7 @@ const recipeSlice = createSlice({
       })
       .addCase(generateRecipe.fulfilled, (state, action) => {
         state.DetailedRecipe = action.payload;
+        state.isRatingUpdated = false;
         state.generate = false;
       })
       .addCase(suggestDishName.rejected, (state, action) => {
@@ -57,6 +64,13 @@ const recipeSlice = createSlice({
       })
       .addCase(suggestDishName.fulfilled, (state, action) => {
         state.suggestedDishName = action.payload;
+      })
+      .addCase(updateRating.rejected, (state, action) => {
+        state.isRatingUpdated = false;
+      })
+      .addCase(updateRating.fulfilled, (state, action) => {
+        state.isRatingUpdated = true;
+        state.DetailedRecipe = action.payload;
       });
   },
 });

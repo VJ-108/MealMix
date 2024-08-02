@@ -1,8 +1,8 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { setGenerate } from "../store/slices/recipeSlice";
-import { getDetailedRecipe } from "../store/thunks/recipeThunks";
+import { getDetailedRecipe, updateRating } from "../store/thunks/recipeThunks";
 import SocialShare from "../components/SocialShare";
 
 const getColorFromPercentage = (value) => {
@@ -13,7 +13,11 @@ const getColorFromPercentage = (value) => {
 };
 
 const RecipeDetail = () => {
+  const [userRating, setUserRating] = useState(0);
   const DetailedRecipe = useSelector((store) => store.recipe.DetailedRecipe);
+  const isRatingUpdated = useSelector((store) => store.recipe.isRatingUpdated);
+  const user = useSelector((store) => store.user.user);
+
   const dispatch = useDispatch();
   const { dishName } = useParams();
 
@@ -21,6 +25,22 @@ const RecipeDetail = () => {
     dispatch(setGenerate(false));
     dispatch(getDetailedRecipe({ name: decodeURIComponent(dishName) }));
   }, [dispatch, dishName]);
+
+  useEffect(() => {
+    if (isRatingUpdated) {
+      setUserRating(0);
+    }
+  }, [isRatingUpdated]);
+
+  const handleRatingChange = (event) => {
+    setUserRating(parseInt(event.target.value, 10));
+  };
+
+  const handleSubmitRating = () => {
+    dispatch(
+      updateRating({ name: DetailedRecipe.name, newRating: userRating })
+    );
+  };
 
   return DetailedRecipe ? (
     <div className="pt-16">
@@ -146,6 +166,61 @@ const RecipeDetail = () => {
                   </ol>
                 </div>
               ))}
+            </div>
+          )}
+          {!isRatingUpdated && user && (
+            <div className="flex flex-col items-center mt-6 md:mt-10">
+              <p className="text-center text-2xl font-bold text-cyan-500">
+                Rate this recipe:
+              </p>
+              <div className="rating flex space-x-2 mb-8 rating-lg ">
+                <input
+                  type="radio"
+                  name="rating-2"
+                  value="1"
+                  className="mask mask-star-2 bg-orange-400"
+                  checked={userRating === 1}
+                  onChange={handleRatingChange}
+                />
+                <input
+                  type="radio"
+                  name="rating-2"
+                  value="2"
+                  className="mask mask-star-2 bg-orange-400"
+                  checked={userRating === 2}
+                  onChange={handleRatingChange}
+                />
+                <input
+                  type="radio"
+                  name="rating-2"
+                  value="3"
+                  className="mask mask-star-2 bg-orange-400"
+                  checked={userRating === 3}
+                  onChange={handleRatingChange}
+                />
+                <input
+                  type="radio"
+                  name="rating-2"
+                  value="4"
+                  className="mask mask-star-2 bg-orange-400"
+                  checked={userRating === 4}
+                  onChange={handleRatingChange}
+                />
+                <input
+                  type="radio"
+                  name="rating-2"
+                  value="5"
+                  className="mask mask-star-2 bg-orange-400"
+                  checked={userRating === 5}
+                  onChange={handleRatingChange}
+                />
+              </div>
+              <button
+                className="bg-teal-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-teal-700 transition-colors duration-300"
+                onClick={handleSubmitRating}
+              >
+                Submit
+              </button>
             </div>
           )}
         </div>

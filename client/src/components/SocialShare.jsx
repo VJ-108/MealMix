@@ -3,7 +3,7 @@ import {
   FacebookShareButton,
   FacebookIcon,
   TwitterShareButton,
-  TwitterIcon,
+  XIcon,
   LinkedinShareButton,
   LinkedinIcon,
   WhatsappShareButton,
@@ -18,7 +18,7 @@ import {
 
 const SocialShare = ({ url, title, media }) => {
   return (
-    <div className="flex space-x-4 p-2">
+    <div className="flex gap-4  flex-wrap mt-4 md:mt-0">
       <RedditShareButton
         url={url}
         title={title}
@@ -38,7 +38,7 @@ const SocialShare = ({ url, title, media }) => {
         title={title}
         className="transition-transform transform hover:scale-110"
       >
-        <TwitterIcon size={32} round />
+        <XIcon size={32} round />
       </TwitterShareButton>
       <LinkedinShareButton
         url={url}

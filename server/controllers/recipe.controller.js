@@ -263,24 +263,36 @@ const getDetailedRecipe = async (req, res) => {
 
     const recipe = await prisma.recipe.findUnique({
       where: { name },
+      select: {
+        id: true,
+        name: true,
+        description: true,
+        type: true,
+        img: true,
+        ingredients: true,
+        steps: true,
+        nutritionalContents: true,
+        dietaryLabels: true,
+        rating: true,
+        ratings: {
+          select: {
+            userId: true,
+          },
+        },
+        createdAt: true,
+        updatedAt: true,
+      },
     });
 
     if (!recipe) {
       return res.status(404).json({ message: "Recipe not found" });
     }
 
-    const ratingCount = recipe.ratedByUserIds.length;
-
-    const detailedRecipe = {
-      ...recipe,
-      ratingCount,
-    };
-
-    myCache.set(key, detailedRecipe, 15 * 60);
+    myCache.set(key, recipe, 15 * 60);
 
     return res.status(200).json({
       message: "Recipe found",
-      recipe: detailedRecipe,
+      recipe,
     });
   } catch (error) {
     console.error("Error getting recipe:", error);
@@ -290,7 +302,68 @@ const getDetailedRecipe = async (req, res) => {
 
 const updateRating = async (req, res) => {
   try {
-  } catch (error) {}
+    const { name, newRating } = req.body;
+    const userId = req.user.id;
+
+    const clampedRating = Math.max(0, Math.min(5, Math.abs(newRating)));
+
+    const recipe = await prisma.recipe.findUnique({
+      where: { name },
+      include: {
+        ratings: true,
+      },
+    });
+
+    if (!recipe) {
+      return res.status(404).json({ message: "Recipe not found" });
+    }
+
+    const existingRating = recipe.ratings.find(
+      (rating) => rating.userId === userId
+    );
+
+    if (existingRating) {
+      await prisma.rating.update({
+        where: {
+          id: existingRating.id,
+        },
+        data: {
+          rating: clampedRating,
+        },
+      });
+    } else {
+      await prisma.rating.create({
+        data: {
+          userId,
+          recipeId: recipe.id,
+          rating: clampedRating,
+        },
+      });
+    }
+
+    const updatedRatings = await prisma.rating.findMany({
+      where: { recipeId: recipe.id },
+    });
+
+    const newAverageRating =
+      updatedRatings.reduce((acc, rating) => acc + rating.rating, 0) /
+      updatedRatings.length;
+
+    const updatedRecipe = await prisma.recipe.update({
+      where: { name },
+      data: {
+        rating: newAverageRating,
+      },
+    });
+
+    return res.status(200).json({
+      message: "Rating updated successfully",
+      recipe: updatedRecipe,
+    });
+  } catch (error) {
+    console.error("Error updating rating:", error);
+    return res.status(500).json({ message: "Error updating rating" });
+  }
 };
 
 export {

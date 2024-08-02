@@ -87,10 +87,10 @@ const login = async (req, res) => {
             id: true,
             username: true,
             email: true,
-            ratedRecipes: {
+            ratings: {
               select: {
-                id: true,
-                name: true,
+                recipeId: true,
+                rating: true,
               },
             },
           },
@@ -123,10 +123,10 @@ const login = async (req, res) => {
         username: true,
         email: true,
         password: true,
-        ratedRecipes: {
+        ratings: {
           select: {
-            id: true,
-            name: true,
+            recipeId: true,
+            rating: true,
           },
         },
       },
@@ -160,7 +160,7 @@ const login = async (req, res) => {
           id: user.id,
           username: user.username,
           email: user.email,
-          ratedRecipes: user.ratedRecipes,
+          ratedRecipesIds: user.ratings,
         },
         accessToken,
         refreshToken,
@@ -191,8 +191,12 @@ const logout = async (req, res) => {
 
 const deleteAccount = async (req, res) => {
   try {
+    const userId = req.user.id;
+    await prisma.rating.deleteMany({
+      where: { userId },
+    });
     const user = await prisma.user.delete({
-      where: { id: req.user.id },
+      where: { id: userId },
     });
     if (!user) {
       return res.status(401).json({ message: "User not found" });

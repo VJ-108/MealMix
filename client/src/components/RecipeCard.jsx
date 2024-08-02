@@ -10,6 +10,7 @@ function getFirst15Words(text) {
 
 const RecipeCard = ({ recipe, type }) => {
   const navigate = useNavigate();
+  const rating = recipe.rating;
 
   if (!recipe || !recipe.img || !recipe.name || !recipe.description) {
     return null;
@@ -20,6 +21,24 @@ const RecipeCard = ({ recipe, type }) => {
   };
 
   const matchesType = recipe.type.some((category) => type === category);
+
+  const renderRatingStars = () => {
+    const stars = [];
+    for (let i = 0; i < 5; i++) {
+      stars.push(
+        <input
+          key={i}
+          type="radio"
+          name="rating"
+          className={`mask mask-star-2 ${
+            i < rating ? "bg-orange-400" : "bg-gray-300"
+          }`}
+          disabled
+        />
+      );
+    }
+    return stars;
+  };
 
   return matchesType ? (
     <div
@@ -37,10 +56,11 @@ const RecipeCard = ({ recipe, type }) => {
         </div>
       </figure>
       <div className="p-4">
-        <p className="text-sm md:text-base text-gray-700 mb-4">
+        <p className="text-sm md:text-base text-gray-700 mb-4 h-[75px]">
           {getFirst15Words(recipe.description)}...
         </p>
-        <div className="flex justify-end">
+        <div className="flex justify-between items-center">
+          <div className="rating flex space-x-1">{renderRatingStars()}</div>
           <button
             className="bg-teal-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-teal-700 transition-colors duration-300"
             onClick={handleOpen}
