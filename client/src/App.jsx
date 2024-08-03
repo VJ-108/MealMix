@@ -13,6 +13,7 @@ import { ToastContainer, Bounce } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import RecipeDetail from "./pages/RecipeDetail";
 import GenRecipe from "./pages/GenRecipe";
+import CreateRecipe from "./pages/CreateRecipe";
 
 const App = () => {
   return (
@@ -26,6 +27,7 @@ const App = () => {
             <Route path="/signup" element={<Signup />} />
             <Route path="/recipe" element={<Recipe />} />
             <Route path="/recipeDetail/:dishName" element={<RecipeDetail />} />
+            <Route path="/createRecipe" element={<CreateRecipe />} />
             <Route path="/genRecipe" element={<GenRecipe />} />
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
