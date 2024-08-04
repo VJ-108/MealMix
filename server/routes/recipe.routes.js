@@ -14,7 +14,7 @@ const router = express.Router();
 
 const generateRecipeLimiter = limiter({ waitingMinute: 30, maxRequest: 5 });
 const suggestDishNameLimiter = limiter({ waitingMinute: 30, maxRequest: 10 });
-const createRecipeLimiter = limiter({ waitingMinute: 10, maxRequest: 10 });
+const createRecipeLimiter = limiter({ waitingMinute: 10, maxRequest: 1 });
 const GetrecipeLimiter = limiter({ waitingMinute: 5, maxRequest: 50 });
 
 router

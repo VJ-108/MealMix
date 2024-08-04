@@ -101,3 +101,40 @@ export const updateRating = createAsyncThunk(
     return response.data?.recipe;
   }
 );
+
+export const createRecipe = createAsyncThunk(
+  "recipe/createRecipe",
+  async (recipe) => {
+    axios.defaults.withCredentials = true;
+    const {
+      name,
+      description,
+      type,
+      steps,
+      ingredients,
+      nutritionalContents,
+      dietaryLabels,
+    } = recipe;
+    const response = await toast.promise(
+      axios.post(`${baseUrl}/recipe/createRecipe`, {
+        name,
+        description,
+        type,
+        steps,
+        ingredients,
+        nutritionalContents,
+        dietaryLabels,
+      }),
+      {
+        pending: "Creating recipe...",
+        success: "Recipe submitted successfully and is pending review",
+        error: {
+          render({ data }) {
+            return data?.response?.data?.message || "Failed to create recipe";
+          },
+        },
+      }
+    );
+    return response.data?.recipe;
+  }
+);

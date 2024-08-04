@@ -167,7 +167,16 @@ const generateRecipe = async (req, res) => {
 
 const createRecipe = async (req, res) => {
   try {
-    const { name, description, type, steps, ingredients } = req.body;
+    const {
+      name,
+      description,
+      type,
+      steps,
+      ingredients,
+      nutritionalContents,
+      dietaryLabels,
+    } = req.body;
+    const userId = req.user.id;
 
     if ([name, description].some((field) => !field?.trim())) {
       return res
@@ -189,18 +198,39 @@ const createRecipe = async (req, res) => {
         .json({ message: "At least one ingredient is required" });
     }
 
+    if (!nutritionalContents || Object.keys(nutritionalContents).length === 0) {
+      return res
+        .status(400)
+        .json({ message: "Nutritional contents are required" });
+    }
+
+    if (!dietaryLabels || dietaryLabels.length === 0) {
+      return res
+        .status(400)
+        .json({ message: "At least one dietary label is required" });
+    }
+
     const img = await getPhoto(name);
-    const newRecipe = await prisma.recipe.create({
-      data: { name, description, type, img, steps, ingredients },
+    await prisma.pendingRecipe.create({
+      data: {
+        name,
+        description,
+        type,
+        img,
+        steps,
+        ingredients,
+        nutritionalContents,
+        dietaryLabels,
+        submittedBy: userId,
+      },
     });
 
     return res.status(201).json({
-      message: "Recipe created successfully",
-      newRecipe,
+      message: "Recipe submitted successfully and is pending review",
     });
   } catch (error) {
-    console.error("Error creating recipe:", error);
-    return res.status(500).json({ message: "Error creating new recipe" });
+    console.error("Error submitting recipe:", error);
+    return res.status(500).json({ message: "Error submitting new recipe" });
   }
 };
 

@@ -8,14 +8,15 @@ datasource db {
 }
 
 model User {
-  id              String   @id @default(auto()) @map("_id") @db.ObjectId
-  username        String   @unique
-  email           String   @unique
-  password        String
-  refreshToken    String?
-  ratings         Rating[]
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  id             String          @id @default(auto()) @map("_id") @db.ObjectId
+  username       String          @unique
+  email          String          @unique
+  password       String
+  refreshToken   String?
+  ratings        Rating[]
+  pendingRecipes PendingRecipe[]
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
 }
 
 model Recipe {
@@ -28,10 +29,27 @@ model Recipe {
   steps               Json
   nutritionalContents Json
   dietaryLabels       String[]
-  rating              Int?   @default(0)
+  rating              Int?     @default(0)
   ratings             Rating[]
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
+}
+
+model PendingRecipe {
+  id                  String   @id @default(auto()) @map("_id") @db.ObjectId
+  name                String
+  description         String
+  type                String[]
+  img                 String
+  ingredients         Json
+  steps               Json
+  nutritionalContents Json
+  dietaryLabels       String[]
+  submittedBy         String   @db.ObjectId
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  user User @relation(fields: [submittedBy], references: [id])
 }
 
 model Rating {
