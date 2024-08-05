@@ -2,10 +2,12 @@ import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { createRecipe } from "../store/thunks/recipeThunks";
 import { toast } from "react-toastify";
+import DOMPurify from "dompurify";
+import Filter from "bad-words";
 
 const CreateRecipe = () => {
   const dispatch = useDispatch();
-
+  const filter = new Filter();
   const [recipe, setRecipe] = useState({
     name: "",
     description: "",
@@ -55,6 +57,7 @@ const CreateRecipe = () => {
       if (newType.length <= 2) {
         return { ...prevRecipe, type: newType };
       } else {
+        toast.warning("You can select up to 2 types");
         return prevRecipe;
       }
     });
@@ -68,6 +71,7 @@ const CreateRecipe = () => {
       if (newLabel.length <= 2) {
         return { ...prevRecipe, dietaryLabels: newLabel };
       } else {
+        toast.warning("You can select up to 2 dietary labels");
         return prevRecipe;
       }
     });
@@ -99,6 +103,7 @@ const CreateRecipe = () => {
       ...prevRecipe,
       ingredients: newIngredient,
     }));
+    setIngredients("");
   };
 
   const handleAddSteps = () => {
@@ -107,18 +112,70 @@ const CreateRecipe = () => {
       ...prevRecipe,
       steps: newStep,
     }));
+    setSteps("");
+  };
+
+  const sanitizeInput = (input) => DOMPurify.sanitize(input);
+
+  const checkProfanity = (input) => {
+    if (filter.isProfane(input)) {
+      toast.error("Profanity is not allowed");
+      return true;
+    }
+    return false;
   };
 
   const handleCreateRecipe = () => {
-     if (Object.keys(recipe.ingredients).length === 0) {
-       toast.info("Click on Add Ingredients Button");
-       return;
-     }
-     if (Object.keys(recipe.steps).length === 0) {
-       toast.info("Click on Add Steps Button");
-       return;
-     }
-    dispatch(createRecipe(recipe));
+    const { name, description, ingredients, steps, nutritionalContents } =
+      recipe;
+
+    if (
+      checkProfanity(name) ||
+      checkProfanity(description) ||
+      Object.values(ingredients).some((item) => item.some(checkProfanity)) ||
+      Object.values(steps).some((item) => item.some(checkProfanity)) ||
+      Object.values(nutritionalContents).some(checkProfanity)
+    ) {
+      return;
+    }
+
+    if (Object.keys(recipe.ingredients).length === 0) {
+      toast.info("Please add ingredients");
+      return;
+    }
+    if (Object.keys(recipe.steps).length === 0) {
+      toast.info("Please add steps");
+      return;
+    }
+
+    const sanitizedRecipe = {
+      ...recipe,
+      name: sanitizeInput(name),
+      description: sanitizeInput(description),
+      ingredients: Object.keys(ingredients).reduce(
+        (acc, key) => ({
+          ...acc,
+          [key]: ingredients[key].map(sanitizeInput),
+        }),
+        {}
+      ),
+      steps: Object.keys(steps).reduce(
+        (acc, key) => ({
+          ...acc,
+          [key]: steps[key].map(sanitizeInput),
+        }),
+        {}
+      ),
+      nutritionalContents: Object.keys(nutritionalContents).reduce(
+        (acc, key) => ({
+          ...acc,
+          [key]: sanitizeInput(nutritionalContents[key]),
+        }),
+        {}
+      ),
+    };
+
+    dispatch(createRecipe(sanitizedRecipe));
   };
 
   return (
@@ -221,7 +278,7 @@ const CreateRecipe = () => {
               <textarea
                 type="text"
                 className="text-base md:text-lg font-medium text-gray-600 border-2 border-teal-300 rounded-lg shadow-md bg-white placeholder-gray-400  focus:outline-none focus:ring-2 focus:ring-teal-500 transition-shadow duration-300 p-1 w-full py-3 px-4 mb-5 min-h-96 resize-none"
-                placeholder={`NOTE: Avoid using "-" or "|" in your recipe as they will be used as separator\n\n- Main Ingredient (add "-" too) \n\t Sub-ingredient (separated by "|") \n- main Ingredient (add "-" too) \n\t Sub-ingredient (separated by "|") \n... \nFor eg:\n- Batter \n1/4 cup All-purpose flour (Maida) | 1/4 teaspoon Baking powder | 1/4 teaspoon Turmeric powder | 1/4 cup Water | 1 tablespoon Sugar \n- Sugar Syrup \n1/2 cup Sugar | 1/4 cup Water | 1/4 teaspoon Lemon juice`}
+                placeholder={`Add Ingredients Here\nFor eg:\n- Batter \n1/4 cup All-purpose flour (Maida) | 1/4 teaspoon Baking powder | 1/4 teaspoon Turmeric powder | 1/4 cup Water | 1 tablespoon Sugar \n- Sugar Syrup \n1/2 cup Sugar | 1/4 cup Water | 1/4 teaspoon Lemon juice`}
                 onChange={(e) => setIngredients(e.target.value)}
               />
             </div>
@@ -241,7 +298,7 @@ const CreateRecipe = () => {
               <textarea
                 type="text"
                 className="text-base md:text-lg font-medium text-gray-600 border-2 border-teal-300 rounded-lg shadow-md bg-white placeholder-gray-400  focus:outline-none focus:ring-2 focus:ring-teal-500 transition-shadow duration-300 p-1 w-full py-3 px-4 mb-5 min-h-96 resize-none"
-                placeholder={`NOTE: Avoid using "-" or "|" in your recipe as they will be used as separator\n\n- main step heading (add "-" too) \n\t sub-steps (separated by "|") \n- main step heading (add "-" too) \n\t sub-steps (separated by "|") \n... \nFor eg:\nSame like ingredients`}
+                placeholder={`Add Steps Here\nFor eg:\n- Prepare Batter \nIn a bowl, whisk together the flour, baking powder, turmeric powder, water, saffron milk, and sugar until a smooth batter is formed. The batter should be thin enough to drizzle. | Let the batter rest for 30 minutes.`}
                 onChange={(e) => setSteps(e.target.value)}
               />
             </div>

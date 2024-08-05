@@ -396,6 +396,78 @@ const updateRating = async (req, res) => {
   }
 };
 
+const getPendingRecipe = async (req, res) => {
+  try {
+    const { secret } = req.body;
+    if (secret !== process.env.SECRET) {
+      return res.status(401).json({
+        message: "Invalid secret",
+      });
+    }
+    const key = `getPendingRecipe-${req.originalUrl || req.url}`;
+    const cachedResponse = myCache.get(key);
+
+    if (cachedResponse) {
+      return res.status(200).json({
+        message: "Pending recipes found",
+        recipes: cachedResponse,
+      });
+    }
+
+    const recipes = await prisma.pendingRecipe.findMany();
+    if (!recipes) {
+      return res.status(404).json({ message: "No pending recipes found" });
+    }
+
+    myCache.set(key, recipes, 10 * 60);
+
+    return res.status(200).json({
+      message: "Pending recipes found",
+      recipes,
+    });
+  } catch (error) {
+    return res.status(500).json({ message: "Error getting pending recipe" });
+  }
+};
+
+const PendingToApproveRecipe = async (req, res) => {
+  try {
+    const { name, secret } = req.body;
+    if (secret !== process.env.SECRET) {
+      return res.status(401).json({ message: "Invalid secret" });
+    }
+    const recipe = await prisma.pendingRecipe.findUnique({
+      where: { name },
+    });
+
+    if (!recipe) {
+      return res.status(404).json({ message: "Recipe not found" });
+    }
+
+    await prisma.pendingRecipe.delete({ where: { id: recipe.id } });
+
+    await prisma.recipe.create({
+      data: {
+        name: recipe.name,
+        description: recipe.description,
+        type: recipe.type,
+        img: recipe.img,
+        ingredients: recipe.ingredients,
+        steps: recipe.steps,
+        nutritionalContents: recipe.nutritionalContents,
+        dietaryLabels: recipe.dietaryLabels,
+      },
+    });
+
+    return res.status(200).json({
+      message: "Recipe approved successfully",
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "Error approving pending recipe" });
+  }
+};
+
 export {
   createRecipe,
   getForRecipePage,
@@ -403,4 +475,6 @@ export {
   generateRecipe,
   suggestDishName,
   updateRating,
+  getPendingRecipe,
+  PendingToApproveRecipe,
 };

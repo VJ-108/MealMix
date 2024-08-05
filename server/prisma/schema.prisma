@@ -37,7 +37,7 @@ model Recipe {
 
 model PendingRecipe {
   id                  String   @id @default(auto()) @map("_id") @db.ObjectId
-  name                String
+  name                String   @unique
   description         String
   type                String[]
   img                 String
