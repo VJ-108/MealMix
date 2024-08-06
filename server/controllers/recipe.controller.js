@@ -398,28 +398,10 @@ const updateRating = async (req, res) => {
 
 const getPendingRecipe = async (req, res) => {
   try {
-    const { secret } = req.body;
-    if (secret !== process.env.SECRET) {
-      return res.status(401).json({
-        message: "Invalid secret",
-      });
-    }
-    const key = `getPendingRecipe-${req.originalUrl || req.url}`;
-    const cachedResponse = myCache.get(key);
-
-    if (cachedResponse) {
-      return res.status(200).json({
-        message: "Pending recipes found",
-        recipes: cachedResponse,
-      });
-    }
-
     const recipes = await prisma.pendingRecipe.findMany();
     if (!recipes) {
       return res.status(404).json({ message: "No pending recipes found" });
     }
-
-    myCache.set(key, recipes, 10 * 60);
 
     return res.status(200).json({
       message: "Pending recipes found",
@@ -432,7 +414,7 @@ const getPendingRecipe = async (req, res) => {
 
 const PendingToApproveRecipe = async (req, res) => {
   try {
-    const { name, secret } = req.body;
+    const { name, secret, approve } = req.body;
     if (secret !== process.env.SECRET) {
       return res.status(401).json({ message: "Invalid secret" });
     }
@@ -445,6 +427,10 @@ const PendingToApproveRecipe = async (req, res) => {
     }
 
     await prisma.pendingRecipe.delete({ where: { id: recipe.id } });
+
+    if (!approve) {
+      return res.status(200).json({ message: "Pending Recipe Rejected" });
+    }
 
     await prisma.recipe.create({
       data: {
@@ -468,6 +454,57 @@ const PendingToApproveRecipe = async (req, res) => {
   }
 };
 
+const getDetailedPendingRecipe = async (req, res) => {
+  try {
+    const dishName = req.body.name?.trim().toLowerCase();
+    const key = `getDetailedPendingRecipe-${
+      req.originalUrl || req.url
+    }-${dishName}`;
+    const cachedResponse = myCache.get(key);
+
+    if (cachedResponse) {
+      return res.status(200).json({
+        message: "Recipe found",
+        recipe: cachedResponse,
+      });
+    }
+
+    const { name } = req.body;
+    if (!name) {
+      return res.status(400).json({ message: "Recipe name is required" });
+    }
+
+    const recipe = await prisma.pendingRecipe.findUnique({
+      where: { name },
+      select: {
+        id: true,
+        name: true,
+        description: true,
+        type: true,
+        img: true,
+        ingredients: true,
+        steps: true,
+        nutritionalContents: true,
+        dietaryLabels: true,
+      },
+    });
+
+    if (!recipe) {
+      return res.status(404).json({ message: "Recipe not found" });
+    }
+
+    myCache.set(key, recipe, 15 * 60);
+
+    return res.status(200).json({
+      message: "Recipe found",
+      recipe,
+    });
+  } catch (error) {
+    console.error("Error getting recipe:", error);
+    return res.status(500).json({ message: "Error getting recipe" });
+  }
+};
+
 export {
   createRecipe,
   getForRecipePage,
@@ -477,4 +514,5 @@ export {
   updateRating,
   getPendingRecipe,
   PendingToApproveRecipe,
+  getDetailedPendingRecipe,
 };

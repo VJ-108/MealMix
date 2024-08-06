@@ -138,3 +138,72 @@ export const createRecipe = createAsyncThunk(
     return response.data?.recipe;
   }
 );
+
+export const getPendingRecipe = createAsyncThunk(
+  "recipe/getPendingRecipe",
+  async () => {
+    axios.defaults.withCredentials = true;
+    const response = await toast.promise(
+      axios.post(`${baseUrl}/recipe/getPendingRecipe`),
+      {
+        error: {
+          render({ data }) {
+            return (
+              data?.response?.data?.message || "Failed to load pending recipe"
+            );
+          },
+        },
+      }
+    );
+    return response.data?.recipes;
+  }
+);
+
+export const PendingToApproveRecipe = createAsyncThunk(
+  "recipe/pendingToApproveRecipe",
+  async ({ name, secret, approve }) => {
+    axios.defaults.withCredentials = true;
+    const response = await toast.promise(
+      axios.post(`${baseUrl}/recipe/pendingToApproveRecipe`, {
+        name,
+        secret,
+        approve,
+      }),
+      {
+        success: `Recipe ${approve ? "approved" : "rejected"} successfully`,
+        error: {
+          render({ data }) {
+            return (
+              data?.response?.data?.message ||
+              `Failed to ${approve ? "approve" : "reject"} recipe`
+            );
+          },
+        },
+      }
+    );
+    return response.data?.recipe;
+  }
+);
+
+export const getDetailedPendingRecipe = createAsyncThunk(
+  "recipe/getDetailedPendingRecipe",
+  async ({ name }) => {
+    axios.defaults.withCredentials = true;
+    const response = await toast.promise(
+      axios.post(`${baseUrl}/recipe/getDetailedPendingRecipe`, {
+        name,
+      }),
+      {
+        error: {
+          render({ data }) {
+            return (
+              data?.response?.data?.message ||
+              "Failed to load pending recipe details"
+            );
+          },
+        },
+      }
+    );
+    return response.data?.recipe;
+  }
+);

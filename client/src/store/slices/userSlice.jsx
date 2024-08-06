@@ -12,6 +12,7 @@ const userSlice = createSlice({
     isRegistered: false,
     isLoggedIn: false,
     user: null,
+    secret: null,
   },
   reducers: {
     registered: (state, action) => {
@@ -22,6 +23,9 @@ const userSlice = createSlice({
     },
     setUser: (state, action) => {
       state.user = action.payload;
+    },
+    setSecret: (state, action) => {
+      state.secret = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -80,5 +84,5 @@ const userSlice = createSlice({
   },
 });
 
-export const { registered, loggedIn, setUser } = userSlice.actions;
+export const { registered, loggedIn, setUser, setSecret } = userSlice.actions;
 export default userSlice.reducer;

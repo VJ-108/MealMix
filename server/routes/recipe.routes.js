@@ -8,6 +8,7 @@ import {
   updateRating,
   getPendingRecipe,
   PendingToApproveRecipe,
+  getDetailedPendingRecipe,
 } from "../controllers/recipe.controller.js";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
 import { limiter } from "../middlewares/rate_limit.middleware.js";
@@ -35,9 +36,12 @@ router
   .post(createRecipeLimiter, verifyJWT, updateRating);
 router
   .route("/getPendingRecipe")
-  .get(GetrecipeLimiter, verifyJWT, getPendingRecipe);
+  .post(GetrecipeLimiter, verifyJWT, getPendingRecipe);
 router
   .route("/pendingToApproveRecipe")
   .post(createRecipeLimiter, verifyJWT, PendingToApproveRecipe);
+router
+  .route("/getDetailedPendingRecipe")
+  .post(GetrecipeLimiter, verifyJWT, getDetailedPendingRecipe);
 
 export default router;

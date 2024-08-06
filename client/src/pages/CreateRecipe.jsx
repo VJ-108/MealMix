@@ -1,11 +1,14 @@
-import React, { useState } from "react";
-import { useDispatch } from "react-redux";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { createRecipe } from "../store/thunks/recipeThunks";
 import { toast } from "react-toastify";
 import DOMPurify from "dompurify";
 import Filter from "bad-words";
 
 const CreateRecipe = () => {
+  const user = useSelector((store) => store.user.user);
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const filter = new Filter();
   const [recipe, setRecipe] = useState({
@@ -178,6 +181,10 @@ const CreateRecipe = () => {
     dispatch(createRecipe(sanitizedRecipe));
   };
 
+  useEffect(() => {
+    if (!user) navigate("/login");
+  }, []);
+  
   return (
     <div className="pt-16">
       <div className="min-h-screen bg-gradient-to-r from-teal-100 to-pink-100 p-4 md:p-8 transition-opacity duration-500 ease-in-out opacity-100">

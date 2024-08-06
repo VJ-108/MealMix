@@ -14,6 +14,9 @@ import "react-toastify/dist/ReactToastify.css";
 import RecipeDetail from "./pages/RecipeDetail";
 import GenRecipe from "./pages/GenRecipe";
 import CreateRecipe from "./pages/CreateRecipe";
+import PendingRecipe from "./pages/admin/PendingRecipe";
+import PendingRecipeDetail from "./pages/admin/PendingRecipeDetail";
+import AdminLogin from "./pages/admin/AdminLogin";
 
 const App = () => {
   return (
@@ -31,6 +34,12 @@ const App = () => {
             <Route path="/genRecipe" element={<GenRecipe />} />
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
+            <Route path="/admin" element={<AdminLogin />} />
+            <Route path="/admin/pendingRecipe" element={<PendingRecipe />} />
+            <Route
+              path="/admin/pendingRecipeDetail/:dishName"
+              element={<PendingRecipeDetail />}
+            />
           </Routes>
         </Router>
         <ToastContainer
