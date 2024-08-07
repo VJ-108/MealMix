@@ -2,6 +2,7 @@ import prisma from "../prisma/index.js";
 import jwt from "jsonwebtoken";
 import bcryptjs from "bcryptjs";
 import { signupSchema, loginSchema } from "../utils/validationSchemas.js";
+import { sendOTP } from "../utils/emailService.js";
 
 const generateRefreshToken = async (user) => {
   const { email } = user;
@@ -35,6 +36,33 @@ const generateAccessToken = async (user) => {
   );
 };
 
+const verifyOTP = async (req, res) => {
+  const { email, otp } = req.body;
+  try {
+    const user = await prisma.user.findUnique({ where: { email } });
+    if (!user) {
+      return res.status(400).json({ message: "User not found" });
+    }
+
+    if (user.otp !== otp) {
+      return res.status(400).json({ message: "Invalid OTP" });
+    }
+
+    if (user.otpExpiry && new Date() > user.otpExpiry) {
+      return res.status(400).json({ message: "OTP has expired" });
+    }
+
+    await prisma.user.update({
+      where: { email },
+      data: { otp: null, otpExpiry: null, verified: true },
+    });
+
+    res.status(200).json({ message: "Email verified successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "Error verifying OTP" });
+  }
+};
+
 const signup = async (req, res) => {
   try {
     const result = signupSchema.safeParse(req.body);
@@ -51,20 +79,48 @@ const signup = async (req, res) => {
         .json({ message: "Username or email already exists" });
     }
     const hashedPassword = await bcryptjs.hash(password, 10);
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const otpExpiryTime = parseInt(process.env.OTP_EXPIRY_TIME, 10);
+    const otpExpiry = new Date(Date.now() + otpExpiryTime);
     const user = await prisma.user.create({
-      data: { username, email, password: hashedPassword },
-      select: {
-        id: true,
-        username: true,
-        email: true,
-      },
+      data: { username, email, password: hashedPassword, otp, otpExpiry },
+      select: { id: true, username: true, email: true },
     });
+    await sendOTP(email, otp);
     res.status(201).json({
-      message: "User created successfully",
+      message: "User created successfully, please verify your email",
       user,
     });
   } catch (error) {
+    console.log(error);
     res.status(500).json({ message: "Error creating new user" });
+  }
+};
+
+const resendOTP = async (req, res) => {
+  const { email } = req.body;
+  try {
+    const user = await prisma.user.findUnique({ where: { email } });
+    if (!user) {
+      return res.status(400).json({ message: "User not found" });
+    }
+
+    if (user.verified) {
+      return res.status(400).json({ message: "User already verified" });
+    }
+
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const otpExpiryTime = parseInt(process.env.OTP_EXPIRY_TIME, 10);
+    const otpExpiry = new Date(Date.now() + otpExpiryTime);
+    await prisma.user.update({
+      where: { email },
+      data: { otp, otpExpiry },
+    });
+
+    await sendOTP(email, otp);
+    res.status(200).json({ message: "OTP sent successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "Error resending OTP" });
   }
 };
 
@@ -87,6 +143,7 @@ const login = async (req, res) => {
             id: true,
             username: true,
             email: true,
+            verified: true,
             ratings: {
               select: {
                 recipeId: true,
@@ -98,6 +155,12 @@ const login = async (req, res) => {
 
         if (!user) {
           return res.status(401).json({ message: "User not found" });
+        }
+
+        if (!user.verified) {
+          return res
+            .status(401)
+            .json({ message: "Please verify your email to login" });
         }
 
         return res.status(200).json({
@@ -123,6 +186,7 @@ const login = async (req, res) => {
         username: true,
         email: true,
         password: true,
+        verified: true,
         ratings: {
           select: {
             recipeId: true,
@@ -134,6 +198,12 @@ const login = async (req, res) => {
 
     if (!user) {
       return res.status(401).json({ message: "Invalid email" });
+    }
+
+    if (!user.verified) {
+      return res
+        .status(401)
+        .json({ message: "Please verify your email to login" });
     }
 
     const isPasswordCorrect = await bcryptjs.compare(password, user.password);
@@ -161,6 +231,7 @@ const login = async (req, res) => {
           username: user.username,
           email: user.email,
           ratedRecipesIds: user.ratings,
+          verified: user.verified,
         },
         accessToken,
         refreshToken,
@@ -211,4 +282,4 @@ const deleteAccount = async (req, res) => {
   }
 };
 
-export { signup, login, logout, deleteAccount };
+export { signup, login, logout, deleteAccount, verifyOTP, resendOTP };

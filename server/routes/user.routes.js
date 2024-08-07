@@ -4,6 +4,8 @@ import {
   login,
   logout,
   signup,
+  verifyOTP,
+  resendOTP,
 } from "../controllers/user.controller.js";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
 import { limiter } from "../middlewares/rate_limit.middleware.js";
@@ -16,5 +18,7 @@ router.route("/signup").post(userLimiter, signup);
 router.route("/login").post(userLimiter, login);
 router.route("/logout").post(userLimiter, verifyJWT, logout);
 router.route("/deleteAccount").delete(userLimiter, verifyJWT, deleteAccount);
+router.route("/verifyOTP").post(userLimiter, verifyOTP);
+router.route("/resendOTP").post(userLimiter, resendOTP);
 
 export default router;

@@ -14,11 +14,11 @@
   "description": "",
   "devDependencies": {
     "nodemon": "^3.1.4",
-    "prisma": "^5.17.0"
+    "prisma": "^5.18.0"
   },
   "dependencies": {
     "@google/generative-ai": "^0.15.0",
-    "@prisma/client": "^5.17.0",
+    "@prisma/client": "^5.18.0",
     "bcryptjs": "^2.4.3",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
@@ -27,6 +27,7 @@
     "express-rate-limit": "^7.3.1",
     "jsonwebtoken": "^9.0.2",
     "node-cache": "^5.1.2",
+    "nodemailer": "^6.9.14",
     "pexels": "^1.4.0",
     "zod": "^3.23.8"
   }

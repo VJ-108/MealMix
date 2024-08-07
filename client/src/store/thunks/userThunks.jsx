@@ -87,3 +87,41 @@ export const deleteUserAccount = createAsyncThunk(
     return {};
   }
 );
+
+export const verifyOTP = createAsyncThunk(
+  "user/verifyOTP",
+  async ({ email, otp }) => {
+    axios.defaults.withCredentials = true;
+    const promise = axios.post(`${baseUrl}/user/verifyOTP`, { email, otp });
+    toast.promise(promise, {
+      pending: "Verifying OTP...",
+      success: "OTP verified successfully!",
+      error: {
+        render({ data }) {
+          return data?.response?.data?.message || "Failed to verify OTP";
+        },
+      },
+    });
+    const response = await promise;
+    return response.data?.user;
+  }
+);
+
+export const resendOTP = createAsyncThunk(
+  "user/resendOTP",
+  async ({ email }) => {
+    axios.defaults.withCredentials = true;
+    const promise = axios.post(`${baseUrl}/user/resendOTP`, { email });
+    toast.promise(promise, {
+      pending: "Resending OTP...",
+      success: "OTP resent successfully!",
+      error: {
+        render({ data }) {
+          return data?.response?.data?.message || "Failed to resend OTP";
+        },
+      },
+    });
+    await promise;
+    return {};
+  }
+);

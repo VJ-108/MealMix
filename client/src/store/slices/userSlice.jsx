@@ -4,6 +4,7 @@ import {
   loginUser,
   logoutUser,
   registerUser,
+  verifyOTP,
 } from "../thunks/userThunks";
 
 const userSlice = createSlice({
@@ -13,6 +14,7 @@ const userSlice = createSlice({
     isLoggedIn: false,
     user: null,
     secret: null,
+    isVerified: false,
   },
   reducers: {
     registered: (state, action) => {
@@ -26,6 +28,9 @@ const userSlice = createSlice({
     },
     setSecret: (state, action) => {
       state.secret = action.payload;
+    },
+    setVerified: (state, action) => {
+      state.isVerified = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -46,13 +51,16 @@ const userSlice = createSlice({
       .addCase(registerUser.pending, (state) => {
         state.isRegistered = false;
         state.isLoggedIn = false;
+        state.isVerified = false;
       })
       .addCase(registerUser.rejected, (state) => {
         state.isRegistered = false;
         state.isLoggedIn = false;
+        state.isVerified = false;
       })
       .addCase(registerUser.fulfilled, (state) => {
         state.isRegistered = true;
+        state.isVerified = false;
       })
       .addCase(logoutUser.rejected, (state) => {
         state.isRegistered = false;
@@ -80,9 +88,19 @@ const userSlice = createSlice({
         state.isRegistered = false;
         state.isLoggedIn = false;
         state.user = null;
+      })
+      .addCase(verifyOTP.pending, (state) => {
+        state.isVerified = false;
+      })
+      .addCase(verifyOTP.rejected, (state) => {
+        state.isVerified = false;
+      })
+      .addCase(verifyOTP.fulfilled, (state, action) => {
+        state.isVerified = true;
       });
   },
 });
 
-export const { registered, loggedIn, setUser, setSecret } = userSlice.actions;
+export const { registered, loggedIn, setUser, setSecret, setVerified } =
+  userSlice.actions;
 export default userSlice.reducer;
