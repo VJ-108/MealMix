@@ -6,18 +6,23 @@ configDotenv();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-app.set("trust proxy", true);
+
 app.use(
   cors({
-    origin: `${process.env.CORS_ORIGIN}`,
+    origin: process.env.CORS_ORIGIN,
     credentials: true,
   })
 );
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Credentials", "true");
+  next();
+});
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-//routes
+// Routes
 import userRouter from "./routes/user.routes.js";
 import recipeRouter from "./routes/recipe.routes.js";
 
