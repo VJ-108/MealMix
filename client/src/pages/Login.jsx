@@ -85,6 +85,17 @@ const Login = () => {
               </Link>
             </p>
           </div>
+          <div className="text-center">
+            <p className="text-gray-600">
+              Login as Admin?{" "}
+              <Link
+                to="/admin"
+                className="text-teal-600 hover:text-teal-700 font-semibold"
+              >
+                Click here
+              </Link>
+            </p>
+          </div>
         </div>
       </div>
     </div>
