@@ -10,11 +10,11 @@ const About = () => {
             About Us
           </h1>
           <p className="text-lg md:text-xl text-gray-700 mb-6">
-            Welcome to our recipe app! We are passionate about bringing you
-            delicious and easy-to-make recipes that cater to all tastes and
-            dietary preferences. Whether you’re a seasoned cook or just getting
-            started, our app offers a wide range of recipes and helpful features
-            to inspire your next meal.
+            Welcome to MealMix! We are passionate about bringing you delicious
+            and easy-to-make recipes that cater to all tastes and dietary
+            preferences. Whether you're a seasoned cook or just getting started,
+            our app offers a wide range of recipes and helpful features to
+            inspire your next meal.
           </p>
           <h2 className="text-2xl md:text-3xl font-bold text-teal-600 mb-4">
             Our Mission
@@ -35,6 +35,15 @@ const About = () => {
             ingredient you have on hand, and we'll suggest three recipe names.
             Click on a recipe to see its details, including ingredients and
             step-by-step instructions.
+          </p>
+          <h2 className="text-2xl md:text-3xl font-bold text-teal-600 mb-4">
+            Create Your Own Recipe
+          </h2>
+          <p className="text-base md:text-lg text-gray-700 mb-6">
+            Do you have a favorite recipe that you'd like to share with the
+            MealMix community? You can create and submit your own recipes
+            through our app. Once your recipe is reviewed and approved by our
+            admin team, it will be displayed for everyone to enjoy.
           </p>
           <h2 className="text-2xl md:text-3xl font-bold text-teal-600 mb-4">
             Get in Touch

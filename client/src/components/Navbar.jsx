@@ -30,7 +30,7 @@ const Navbar = () => {
               to="/"
               className="btn btn-error text-xl text-white hover:bg-red-500 transition-all duration-300"
             >
-              Recipe
+              MealMix
             </Link>
           </div>
         </div>

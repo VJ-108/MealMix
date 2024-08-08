@@ -5,6 +5,7 @@ import { configDotenv } from "dotenv";
 configDotenv();
 
 const app = express();
+const PORT = process.env.PORT || 3000;
 app.use(
   cors({
     origin: `${process.env.CORS_ORIGIN}`,
@@ -26,6 +27,6 @@ app.get("/", (req, res) => {
   res.send("Hello World!");
 });
 
-app.listen(3000, () => {
-  console.log("App listening at http://localhost:3000");
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
 });
