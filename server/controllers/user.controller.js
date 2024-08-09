@@ -282,4 +282,26 @@ const deleteAccount = async (req, res) => {
   }
 };
 
-export { signup, login, logout, deleteAccount, verifyOTP, resendOTP };
+const isSecretCorrect = async (req, res) => {
+  try {
+    const { secret } = req.body;
+    if (secret !== process.env.SECRET) {
+      return res
+        .status(401)
+        .json({ message: "Incorrect secret", correct: false });
+    }
+    res.status(200).json({ message: "Secret is correct", correct: true });
+  } catch (error) {
+    res.status(500).json({ message: "Error checking secret", correct: false });
+  }
+};
+
+export {
+  signup,
+  login,
+  logout,
+  deleteAccount,
+  verifyOTP,
+  resendOTP,
+  isSecretCorrect,
+};

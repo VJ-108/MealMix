@@ -125,3 +125,22 @@ export const resendOTP = createAsyncThunk(
     return {};
   }
 );
+
+export const isSecretCorrect = createAsyncThunk(
+  "user/isSecretCorrect",
+  async ({ secret }) => {
+    axios.defaults.withCredentials = true;
+    const promise = axios.post(`${baseUrl}/user/isSecretCorrect`, { secret });
+    toast.promise(promise, {
+      pending: "Checking secret...",
+      success: "Secret is correct!",
+      error: {
+        render({ data }) {
+          return data?.response?.data?.message || "Failed to check secret";
+        },
+      },
+    });
+    const response = await promise;
+    return response.data?.correct;
+  }
+);

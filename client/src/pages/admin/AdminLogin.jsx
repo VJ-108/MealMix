@@ -1,15 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { loginUser } from "../../store/thunks/userThunks";
+import { isSecretCorrect, loginUser } from "../../store/thunks/userThunks";
 import { toast } from "react-toastify";
-import { setSecret } from "../../store/slices/userSlice";
 
 const AdminLogin = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [secretPassword, setSecretPassword] = useState("");
-  const secret = useSelector((store) => store.user.admin);
+  const secret = useSelector((store) => store.user.secret);
   const user = useSelector((store) => store.user.user);
 
   const dispatch = useDispatch();
@@ -33,9 +32,8 @@ const AdminLogin = () => {
       return;
     }
 
-    if (secretPassword !== import.meta.env.VITE_SECRET) {
-      toast.error("Invalid secret password.");
-      return;
+    if (secretPassword) {
+      dispatch(isSecretCorrect({ secret: secretPassword }));
     }
 
     dispatch(loginUser({ email, password }));
@@ -46,9 +44,10 @@ const AdminLogin = () => {
 
   useEffect(() => {
     if (user) {
-      dispatch(setSecret(secretPassword));
-      setSecretPassword("");
-      navigate("/admin/pendingRecipe");
+      if (secret) {
+        setSecretPassword("");
+        navigate("/admin/pendingRecipe");
+      }
     }
   }, [user, secret, navigate]);
 
