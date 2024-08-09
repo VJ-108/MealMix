@@ -7,15 +7,14 @@
     "dev": "nodemon -r dotenv/config --experimental-json-modules index.js",
     "start": "node -r dotenv/config --experimental-json-modules index.js",
     "prisma": "npx prisma generate && npx prisma db push",
-    "build": "cd ../client && npm install && npm run build && cd ../server && npm install && npm run prisma generate"
+    "build": "cd ../client/ && npm install && npm run build && cd ../server/ && npm install && npm run prisma generate"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "",
   "devDependencies": {
-    "nodemon": "^3.1.4",
-    "prisma": "^5.18.0"
+    "nodemon": "^3.1.4"
   },
   "dependencies": {
     "@google/generative-ai": "^0.15.0",
@@ -30,6 +29,7 @@
     "node-cache": "^5.1.2",
     "nodemailer": "^6.9.14",
     "pexels": "^1.4.0",
-    "zod": "^3.23.8"
+    "zod": "^3.23.8",
+    "prisma": "^5.18.0"
   }
 }
