@@ -19,8 +19,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 // Routes
-import userRouter from "./routes/user.routes.js";
-import recipeRouter from "./routes/recipe.routes.js";
+import userRouter from "../routes/user.routes.js";
+import recipeRouter from "../routes/recipe.routes.js";
 
 app.use("/api/user", userRouter);
 app.use("/api/recipe", recipeRouter);
